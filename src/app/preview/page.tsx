@@ -207,8 +207,8 @@ export default function Preview() {
       <section className="flex w-full flex-col gap-4">
         <h2 className="text-heading-h6 text-theme-heading-foreground">GistSnippet</h2>
         <div className="flex flex-col gap-6">
-          <GistSnippet state="default" />
-          <GistSnippet state="expanded" />
+          <GistSnippet />
+          <GistSnippet />
         </div>
       </section>
 
