@@ -1,1 +1,7 @@
+echo "Running lint-staged (lint + format staged files)..."
 pnpm exec lint-staged
+
+echo "Running TypeScript type-check..."
+pnpm typecheck
+
+echo "Pre-commit checks passed."

@@ -1,4 +1,4 @@
-## Description
+# Description
 
 <!-- What does this PR do, and why? Provide enough context for a reviewer who has no prior knowledge of this change. -->
 
@@ -25,11 +25,7 @@
 
 ## Screenshots / recordings
 
-<!-- Required for any UI change. Include before & after, and mobile + desktop if layout is affected. -->
-
-| Before | After |
-| ------ | ----- |
-|        |       |
+<!-- Required for any UI change. Include mobile + desktop if layout is affected. -->
 
 ## How was this tested?
 

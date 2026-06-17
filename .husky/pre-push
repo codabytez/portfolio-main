@@ -1,0 +1,13 @@
+echo "Running format check..."
+pnpm format:check
+
+echo "Running lint..."
+pnpm lint
+
+echo "Running TypeScript type-check..."
+pnpm typecheck
+
+echo "Running production build..."
+pnpm build
+
+echo "Pre-push checks passed."

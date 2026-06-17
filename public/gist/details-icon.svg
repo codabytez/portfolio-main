@@ -1,0 +1,25 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="16" height="16" fill="#E5E5E5"/>
+<g id="components">
+<rect width="2078" height="3798" transform="translate(-577 -1725)" fill="#020618"/>
+<g id="Gist snippet">
+<rect x="-452.5" y="-290.5" width="652" height="612" rx="4.5" stroke="#9747FF" stroke-dasharray="10 5"/>
+<g id="state=Expanded">
+<g id="Header">
+<g id="Actions">
+<g id="Details Action">
+<g id="Details Icon" clip-path="url(#clip0_42_262)">
+<path id="Vector" d="M3.28592 12.714C2.66595 12.0957 2.17428 11.3609 1.83918 10.5519C1.50407 9.74291 1.33214 8.87568 1.33326 8.00004C1.33326 4.31804 4.31792 1.33337 7.99992 1.33337C11.6819 1.33337 14.6666 4.31804 14.6666 8.00004C14.6666 11.682 11.6819 14.6667 7.99992 14.6667H1.33326L3.28592 12.714ZM5.33326 8.66671C5.33326 9.37395 5.61421 10.0522 6.11431 10.5523C6.6144 11.0524 7.29268 11.3334 7.99992 11.3334C8.70717 11.3334 9.38544 11.0524 9.88554 10.5523C10.3856 10.0522 10.6666 9.37395 10.6666 8.66671H5.33326Z" fill="#F8FAFC"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_42_262">
+<rect width="16" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
