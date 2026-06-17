@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 66.3457 196.073" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="snake">
+<path id="snake body" d="M10.3457 38.4612V113.461H62.3457V192.073" stroke="url(#paint0_linear_0_62)" stroke-width="8" stroke-linecap="round"/>
+<g id="snake food">
+<circle id="Ellipse 4" opacity="0.1" cx="10.3456" cy="10.3456" r="10.3456" fill="var(--fill-0, #46ECD5)"/>
+<circle id="Ellipse 3" opacity="0.2" cx="10.3456" cy="10.3456" r="7.34558" fill="var(--fill-0, #46ECD5)"/>
+<circle id="Ellipse 2" cx="10.3456" cy="10.3456" r="4" fill="var(--fill-0, #46ECD5)"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_62" x1="10.3457" y1="47.4612" x2="73.5184" y2="166.073" gradientUnits="userSpaceOnUse">
+<stop stop-color="#43D9AD"/>
+<stop offset="1" stop-color="#43D9AD" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>

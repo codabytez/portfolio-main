@@ -1,0 +1,18 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="24" height="24" fill="white"/>
+<g id="icons">
+<g id="button states">
+<rect width="1921" height="917" transform="translate(-253 -597)" fill="#0A0A0A"/>
+<g id="icons list">
+<g id="icon close" clip-path="url(#clip0_26505_1516)">
+<path id="Vector" d="M12 10.586L16.95 5.63599L18.364 7.04999L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.04999 18.364L5.63599 16.95L10.586 12L5.63599 7.04999L7.04999 5.63599L12 10.586Z" fill="#62748E"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_26505_1516">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>
