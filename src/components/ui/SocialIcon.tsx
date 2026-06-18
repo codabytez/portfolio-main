@@ -1,4 +1,4 @@
-type SocialIconType = "x" | "facebook" | "linkedin" | "git";
+type SocialIconType = "x" | "facebook" | "linkedin" | "github" | "instagram";
 type SocialIconState = "static" | "hover";
 
 type SocialIconProps = {
@@ -11,7 +11,8 @@ const icons: Record<SocialIconType, string> = {
   x: "ri-twitter-x-fill",
   facebook: "ri-facebook-fill",
   linkedin: "ri-linkedin-fill",
-  git: "ri-github-fill",
+  github: "ri-github-fill",
+  instagram: "ri-instagram-line",
 };
 
 export default function SocialIcon({ className, type = "x", state = "static" }: SocialIconProps) {

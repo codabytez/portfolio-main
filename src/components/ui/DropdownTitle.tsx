@@ -7,6 +7,7 @@ type DropdownTitleProps = {
   className?: string;
   state?: "closed" | "opened";
   title?: string;
+  folderColor?: string;
   children?: React.ReactNode;
   onOpen?: () => void;
 };
@@ -15,6 +16,7 @@ export default function DropdownTitle({
   className,
   state = "closed",
   title = "title",
+  folderColor = "text-theme-foreground",
   children,
   onOpen,
 }: DropdownTitleProps) {
@@ -41,7 +43,7 @@ export default function DropdownTitle({
         />
         <div className="flex flex-1 items-center gap-3">
           <i
-            className="ri-folder-fill text-theme-foreground text-[16px] leading-none"
+            className={["ri-folder-fill text-[16px] leading-none", folderColor].join(" ")}
             aria-hidden="true"
           />
           <p className="text-body-md text-theme-heading-foreground">{title}</p>

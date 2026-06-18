@@ -10,12 +10,19 @@ type Props = {
 
 export default function AnimatedAboutLayout({ sidebar, content, className }: Props) {
   return (
-    <div className={["flex min-h-0 w-full flex-1", className].filter(Boolean).join(" ")}>
+    <div
+      className={[
+        "flex min-h-0 w-full flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <motion.div
         initial={{ opacity: 0, x: -24 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="flex shrink-0 self-stretch"
+        className="flex w-full shrink-0 lg:w-auto lg:self-stretch"
       >
         {sidebar}
       </motion.div>

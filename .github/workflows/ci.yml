@@ -29,3 +29,5 @@ jobs:
       - run: pnpm typecheck
 
       - run: pnpm build
+        env:
+          NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}

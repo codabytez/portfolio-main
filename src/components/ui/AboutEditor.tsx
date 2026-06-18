@@ -25,7 +25,7 @@ export default function AboutEditor({ lines = DEFAULT_LINES, className }: AboutE
       </div>
 
       {/* Code content */}
-      <div className="text-body-lg text-theme-foreground shrink-0 whitespace-pre-wrap">
+      <div className="text-body-lg text-theme-foreground min-w-0 whitespace-pre-wrap">
         {lines.map((line, i) => (
           <p key={i} className="leading-6.75">
             {line}

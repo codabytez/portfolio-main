@@ -1,122 +1,38 @@
 "use client";
 
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
 import { useAbout } from "@/components/ui/AboutContext";
 import AboutEditor from "@/components/ui/AboutEditor";
+import Skeleton from "@/components/ui/Skeleton";
 
-const TAB_LINES: Record<string, string[]> = {
-  bio: [
-    "/**",
-    " * Bio",
-    " *",
-    " * I have 5 years of experience in web",
-    " * development. I love building products",
-    " * that are fast, beautiful, and simple.",
-    " *",
-    " * I care deeply about the details —",
-    " * from pixel-perfect UI to clean",
-    " * architecture on the backend.",
-    " */",
-  ],
-  interests: [
-    "/**",
-    " * Interests",
-    " *",
-    " * - Web performance & UX",
-    " * - Design systems",
-    " * - Open source",
-    " * - AI & LLMs",
-    " * - Distributed systems",
-    " */",
-  ],
-  education: [
-    "/**",
-    " * Education",
-    " *",
-    " * Studied Computer Science.",
-    " * Learned more from building",
-    " * things than from classrooms.",
-    " */",
-  ],
-  "high-school": [
-    "/**",
-    " * High School",
-    " *",
-    " * Graduated with distinction.",
-    " * First exposure to programming",
-    " * was here — never looked back.",
-    " */",
-  ],
-  university: [
-    "/**",
-    " * University",
-    " *",
-    " * B.Sc. Computer Science",
-    " * Focused on software engineering,",
-    " * algorithms, and systems design.",
-    " */",
-  ],
-  experience: [
-    "/**",
-    " * Experience",
-    " *",
-    " * 5 years of professional",
-    " * web development.",
-    " *",
-    " * frontend & backend,",
-    " * startups & product teams.",
-    " */",
-  ],
-  skills: [
-    "/**",
-    " * Skills",
-    " *",
-    " * Languages:",
-    " *   TypeScript, JavaScript",
-    " *",
-    " * Frontend:",
-    " *   React, Next.js, Tailwind",
-    " *",
-    " * Backend:",
-    " *   Node.js, PostgreSQL, Prisma",
-    " *",
-    " * Tools:",
-    " *   Figma, Git, Docker",
-    " */",
-  ],
-  certificates: ["/**", " * Certificates", " *", " * - ...", " * - ...", " */"],
-  music: [
-    "/**",
-    " * Music",
-    " *",
-    " * Guitar & piano.",
-    " * Always have headphones on.",
-    " * Genres: everything.",
-    " */",
-  ],
-  books: [
-    "/**",
-    " * Books",
-    " *",
-    " * Sci-fi, tech, philosophy.",
-    " * Currently reading: ...",
-    " */",
-  ],
-  hiking: [
-    "/**",
-    " * Hiking",
-    " *",
-    " * Mountains, trails, nature.",
-    " * Best way to reset.",
-    " */",
-  ],
-  games: ["/**", " * Games", " *", " * Strategy & RPG.", " * Favourite: ...", " */"],
-};
+function contentToLines(title: string, content: string): string[] {
+  const bodyLines = content.split("\n").map((line) => (line.trim() === "" ? " *" : ` * ${line}`));
+  return ["/**", ` * ${title}`, " *", ...bodyLines, " */"];
+}
+
+const FALLBACK_LINES = ["/**", " * Select a file to view.", " */"];
 
 type Props = { className?: string };
 
 export default function AboutEditorPanel({ className }: Props) {
   const { activeTab } = useAbout();
-  const lines = TAB_LINES[activeTab] ?? ["/**", " * Select a file to view.", " */"];
+  const sections = useQuery(api.about.getAll);
+
+  let lines: string[];
+
+  if (sections === undefined) {
+    return (
+      <div className={["flex flex-col gap-2 p-6", className].filter(Boolean).join(" ")}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} className="h-4" style={{ width: `${55 + (i % 3) * 15}%` }} />
+        ))}
+      </div>
+    );
+  } else {
+    const section = sections.find((s) => s.key === activeTab);
+    lines = section ? contentToLines(section.title, section.content) : FALLBACK_LINES;
+  }
 
   return <AboutEditor lines={lines} className={className} />;
 }

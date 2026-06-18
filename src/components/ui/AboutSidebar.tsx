@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
 import AboutMenuIcon from "@/components/ui/AboutMenuIcon";
 import DropdownTitle from "@/components/ui/DropdownTitle";
 import DropdownItem from "@/components/ui/DropdownItem";
@@ -23,21 +25,32 @@ function AccordionSection({
   label,
   children,
   bordered,
+  open: controlledOpen,
+  onToggle,
 }: {
   label: string;
   children: React.ReactNode;
   bordered?: boolean;
+  open?: boolean;
+  onToggle?: () => void;
 }) {
-  const [open, setOpen] = useState(true);
+  const [localOpen, setLocalOpen] = useState(true);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : localOpen;
+
+  function handleClick() {
+    if (isControlled) onToggle?.();
+    else setLocalOpen((o) => !o);
+  }
 
   return (
     <div className="flex w-full flex-col items-start">
       <motion.button
-        onClick={() => setOpen((o) => !o)}
+        onClick={handleClick}
         whileHover={{ backgroundColor: "rgb(29 41 61 / 0.4)" }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
         className={[
-          "border-theme-theme-stroke flex w-full cursor-pointer items-center gap-3 border-b px-6 py-3",
+          "border-theme-theme-stroke bg-primitive-slate-700 flex w-full cursor-pointer items-center gap-3 border-b px-6 py-3 lg:bg-transparent",
           bordered ? "border-t" : "",
         ]
           .filter(Boolean)
@@ -69,59 +82,122 @@ function AccordionSection({
   );
 }
 
-function ProfessionalInfoContent() {
+function ProfessionalInfoContent({ open, onToggle }: { open?: boolean; onToggle?: () => void }) {
   const { openTab } = useAbout();
   return (
-    <AccordionSection label="professional-info">
-      <DropdownTitle title="experience" onOpen={() => openTab("experience")} />
-      <DropdownTitle title="skills" onOpen={() => openTab("skills")} />
-      <DropdownTitle title="certificates" onOpen={() => openTab("certificates")} />
-    </AccordionSection>
-  );
-}
-
-function PersonalInfoContent() {
-  const { openTab } = useAbout();
-  return (
-    <AccordionSection label="personal-info">
-      <DropdownTitle title="bio" onOpen={() => openTab("bio")} />
-      <DropdownTitle title="interests" onOpen={() => openTab("interests")} />
-      <DropdownTitle title="education" state="opened" onOpen={() => openTab("education")}>
-        <DropdownItem label="high-school" variant="space" onOpen={() => openTab("high-school")} />
-        <DropdownItem label="university" variant="space" onOpen={() => openTab("university")} />
-      </DropdownTitle>
-    </AccordionSection>
-  );
-}
-
-function ContactsSection() {
-  return (
-    <AccordionSection label="contacts" bordered>
-      <DropdownItem
-        label="user@gmail.com"
-        icon="ri-mail-line"
-        variant="no space"
-        onOpen={() => (window.location.href = "mailto:user@gmail.com")}
+    <AccordionSection label="professional-info" open={open} onToggle={onToggle}>
+      <DropdownTitle
+        title="experience"
+        folderColor="text-primitive-orange-400"
+        onOpen={() => openTab("experience")}
       />
-      <DropdownItem
-        label="+3598246359"
-        icon="ri-phone-line"
-        variant="no space"
-        onOpen={() => (window.location.href = "tel:+3598246359")}
+      <DropdownTitle
+        title="skills"
+        folderColor="text-primitive-teal-400"
+        onOpen={() => openTab("skills")}
+      />
+      <DropdownTitle
+        title="certificates"
+        folderColor="text-primitive-indigo-500"
+        onOpen={() => openTab("certificates")}
       />
     </AccordionSection>
   );
 }
 
-function HobbiesContent() {
+function PersonalInfoContent({ open, onToggle }: { open?: boolean; onToggle?: () => void }) {
   const { openTab } = useAbout();
   return (
-    <AccordionSection label="hobbies">
-      <DropdownTitle title="music" onOpen={() => openTab("music")} />
-      <DropdownTitle title="books" onOpen={() => openTab("books")} />
-      <DropdownTitle title="hiking" onOpen={() => openTab("hiking")} />
-      <DropdownTitle title="games" onOpen={() => openTab("games")} />
+    <AccordionSection label="personal-info" open={open} onToggle={onToggle}>
+      <DropdownTitle
+        title="bio"
+        folderColor="text-primitive-rose-400"
+        onOpen={() => openTab("bio")}
+      />
+      <DropdownTitle
+        title="interests"
+        folderColor="text-primitive-teal-400"
+        onOpen={() => openTab("interests")}
+      />
+      <DropdownTitle
+        title="education"
+        folderColor="text-primitive-indigo-500"
+        onOpen={() => openTab("education")}
+      />
     </AccordionSection>
+  );
+}
+
+function ContactsSection({ open, onToggle }: { open?: boolean; onToggle?: () => void }) {
+  const contact = useQuery(api.contact.get);
+
+  return (
+    <AccordionSection label="contacts" bordered open={open} onToggle={onToggle}>
+      {contact?.email && (
+        <DropdownItem
+          label={contact.email}
+          icon="ri-mail-line"
+          variant="no space"
+          onOpen={() => (window.location.href = `mailto:${contact.email}`)}
+        />
+      )}
+      {contact?.phone && (
+        <DropdownItem
+          label={contact.phone}
+          icon="ri-phone-line"
+          variant="no space"
+          onOpen={() => (window.location.href = `tel:${contact.phone}`)}
+        />
+      )}
+    </AccordionSection>
+  );
+}
+
+function HobbiesContent({ open, onToggle }: { open?: boolean; onToggle?: () => void }) {
+  const { openTab } = useAbout();
+  return (
+    <AccordionSection label="hobbies" open={open} onToggle={onToggle}>
+      <DropdownTitle
+        title="music"
+        folderColor="text-primitive-rose-400"
+        onOpen={() => openTab("music")}
+      />
+      <DropdownTitle
+        title="movies"
+        folderColor="text-primitive-orange-400"
+        onOpen={() => openTab("movies")}
+      />
+      <DropdownTitle
+        title="games"
+        folderColor="text-primitive-indigo-500"
+        onOpen={() => openTab("games")}
+      />
+    </AccordionSection>
+  );
+}
+
+type MobileSection = "personal-info" | "professional-info" | "hobbies" | "contacts";
+
+function MobileAccordions() {
+  const [openSection, setOpenSection] = useState<MobileSection | null>("personal-info");
+
+  function toggle(id: MobileSection) {
+    setOpenSection((o) => (o === id ? null : id));
+  }
+
+  return (
+    <div className="flex w-full flex-col lg:hidden">
+      <PersonalInfoContent
+        open={openSection === "personal-info"}
+        onToggle={() => toggle("personal-info")}
+      />
+      <ProfessionalInfoContent
+        open={openSection === "professional-info"}
+        onToggle={() => toggle("professional-info")}
+      />
+      <HobbiesContent open={openSection === "hobbies"} onToggle={() => toggle("hobbies")} />
+      <ContactsSection open={openSection === "contacts"} onToggle={() => toggle("contacts")} />
+    </div>
   );
 }
 
@@ -132,16 +208,27 @@ export default function AboutSidebar({ className }: { className?: string }) {
 
   return (
     <div
-      className={["border-theme-theme-stroke flex shrink-0 self-stretch border-r", className]
+      className={[
+        "border-theme-theme-stroke flex w-full shrink-0 flex-col border-b lg:w-auto lg:flex-row lg:self-stretch lg:border-r lg:border-b-0",
+        className,
+      ]
         .filter(Boolean)
         .join(" ")}
     >
-      {/* Icon strip */}
+      {/* Mobile: _about-me header */}
+      <div className="border-theme-theme-stroke flex w-full items-center border-b px-6 py-3 lg:hidden">
+        <p className="text-body-md text-theme-heading-foreground">_about-me</p>
+      </div>
+
+      {/* Mobile: radio-style accordion */}
+      <MobileAccordions />
+
+      {/* Desktop: icon strip */}
       <motion.div
         variants={iconContainer}
         initial="hidden"
         animate="visible"
-        className="border-theme-theme-stroke flex w-17.25 shrink-0 flex-col items-center gap-8 border-r px-5 py-3"
+        className="border-theme-theme-stroke hidden w-17.25 shrink-0 flex-col items-center gap-8 border-r px-5 py-3 lg:flex"
       >
         {ICONS.map((type) => (
           <motion.div key={type} variants={iconItem}>
@@ -154,8 +241,8 @@ export default function AboutSidebar({ className }: { className?: string }) {
         ))}
       </motion.div>
 
-      {/* Accordion panel */}
-      <div className="flex w-60.5 shrink-0 flex-col items-start">
+      {/* Desktop: accordion panel */}
+      <div className="hidden w-60.5 shrink-0 flex-col items-start lg:flex">
         <AnimatePresence mode="wait">
           <motion.div
             key={selected}

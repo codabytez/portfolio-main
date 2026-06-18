@@ -26,14 +26,12 @@ export default function Input({
 
   return (
     <div
-      className={["flex w-full flex-col items-start gap-[7px]", className]
-        .filter(Boolean)
-        .join(" ")}
+      className={["flex w-full flex-col items-start gap-1.75", className].filter(Boolean).join(" ")}
     >
       <p className="text-body-md text-theme-foreground w-full">{label}</p>
       <div
         className={[
-          "rounded-3 flex w-full items-center gap-[10px] border p-[12px]",
+          "rounded-3 p-button-left-right flex w-full items-center gap-[10px] border",
           stateClasses[state],
         ].join(" ")}
       >

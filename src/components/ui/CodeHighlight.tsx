@@ -18,9 +18,7 @@ export default async function CodeHighlight({
 
   return (
     <div
-      className={["[&_pre]:bg-transparent! [&_pre]:p-0! [&_pre]:text-[13px]", className]
-        .filter(Boolean)
-        .join(" ")}
+      className={["[&_pre]:bg-transparent! [&_pre]:p-0!", className].filter(Boolean).join(" ")}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
