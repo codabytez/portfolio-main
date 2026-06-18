@@ -189,15 +189,29 @@ export default function ContactContent() {
   const [message, setMessage] = useState("");
   const [emailError, setEmailError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [sendError, setSendError] = useState("");
 
   const allFilled = name.trim() !== "" && email.trim() !== "" && message.trim() !== "";
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!isValidEmail(email)) {
       setEmailError("Wrong email address");
       return;
     }
     setEmailError("");
+    setSendError("");
+    setLoading(true);
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name.trim(), email: email.trim(), message: message.trim() }),
+    });
+    setLoading(false);
+    if (!res.ok) {
+      setSendError("Something went wrong. Please try again.");
+      return;
+    }
     setSubmitted(true);
     setName("");
     setEmail("");
@@ -282,10 +296,15 @@ export default function ContactContent() {
                       placeholder="your message here..."
                     />
                   </motion.div>
-                  <motion.div variants={fieldVariants}>
-                    <Button variant="primary" disabled={!allFilled} onClick={handleSubmit}>
-                      submit-message
+                  <motion.div variants={fieldVariants} className="flex flex-col gap-2">
+                    <Button
+                      variant="primary"
+                      disabled={!allFilled || loading}
+                      onClick={handleSubmit}
+                    >
+                      {loading ? "sending..." : "submit-message"}
                     </Button>
+                    {sendError && <p className="text-body-sm text-[#fb2c36]">{sendError}</p>}
                   </motion.div>
                 </motion.div>
               )}
