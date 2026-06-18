@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio
+
+A personal developer portfolio built with Next.js 15, Convex, and Tailwind CSS. Includes a CMS-style admin panel for managing all content without touching code.
+
+## Tech Stack
+
+- **Framework** — Next.js 15 (App Router)
+- **Database & backend** — Convex
+- **Styling** — Tailwind CSS v4
+- **Animations** — Motion (Framer Motion v12)
+- **Package manager** — pnpm
+
+## Features
+
+- Home, About, Projects, and Contact pages
+- Project detail modals with tech stack, features, and links
+- Snake game easter egg on the home page
+- Admin panel (`/admin`) to manage all portfolio content
+- Skeleton loading states and empty states
+- SEO metadata and OG image on every page
+- Fully responsive
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Set up environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fill in your values — see `.env.example` for descriptions.
 
-## Learn More
+### 3. Set up Convex
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx convex dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This starts the Convex dev server, generates the client, and keeps your schema in sync. Leave it running alongside the Next.js dev server.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Run the dev server
 
-## Deploy on Vercel
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open [http://localhost:3000](http://localhost:3000) to see the portfolio and [http://localhost:3000/admin](http://localhost:3000/admin) for the admin panel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Admin Panel
+
+Visit `/admin` to manage your portfolio content — profile, about sections, projects, and contact info. Protected by a password set in `ADMIN_PASSWORD`.
+
+## Deployment
+
+Deploy to Vercel and set up a production Convex deployment:
+
+1. Push to GitHub and import the repo on [Vercel](https://vercel.com)
+2. Add all environment variables from `.env.example` in the Vercel dashboard
+3. Run `npx convex deploy` to deploy your Convex functions to production

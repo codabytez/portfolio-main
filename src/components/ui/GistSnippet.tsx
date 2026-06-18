@@ -20,7 +20,7 @@ export default function GistSnippet({ className, codeBlock }: GistSnippetProps) 
         .join(" ")}
     >
       {/* Header */}
-      <div className="flex w-full items-start justify-between">
+      <div className="flex w-full flex-wrap items-start justify-between gap-y-2">
         <div className="flex items-center gap-3">
           <Avatar variant="1" />
           <div className="flex flex-col gap-1">

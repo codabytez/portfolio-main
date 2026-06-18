@@ -21,13 +21,15 @@ export default async function AboutGistShowcase({ className }: { className?: str
   return (
     <div
       className={[
-        "border-theme-theme-stroke flex h-full flex-col gap-8 overflow-y-auto border-r px-8 py-3",
+        "border-theme-theme-stroke flex h-full flex-col gap-8 overflow-y-auto border-r px-4 py-3 xl:px-8",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      <p className="text-body-lg text-theme-foreground shrink-0">{"// Code snippet showcase:"}</p>
+      <p className="text-body-sm text-theme-foreground xl:text-body-lg shrink-0">
+        {"// Code snippet showcase:"}
+      </p>
       <div className="flex w-full shrink-0 flex-col items-start gap-8">
         <GistSnippet codeBlock={codeBlock} />
         <GistSnippet codeBlock={codeBlock} />

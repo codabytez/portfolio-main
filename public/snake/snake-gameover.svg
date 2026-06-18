@@ -1,9 +1,0 @@
-<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 60 161.612" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path id="snake body" d="M56 157.612V79H4V30.9206M4 30.9206V4H42.1729V30.9206H4Z" stroke="url(#paint0_linear_0_36)" stroke-width="8" stroke-linecap="round"/>
-<defs>
-<linearGradient id="paint0_linear_0_36" x1="4" y1="13" x2="67.1727" y2="131.612" gradientUnits="userSpaceOnUse">
-<stop stop-color="#43D9AD"/>
-<stop offset="1" stop-color="#43D9AD" stop-opacity="0"/>
-</linearGradient>
-</defs>
-</svg>
