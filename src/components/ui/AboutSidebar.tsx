@@ -228,7 +228,7 @@ export default function AboutSidebar({ className }: { className?: string }) {
         variants={iconContainer}
         initial="hidden"
         animate="visible"
-        className="border-theme-theme-stroke hidden w-17.25 shrink-0 flex-col items-center gap-8 border-r px-5 py-3 lg:flex"
+        className="border-theme-theme-stroke hidden w-17 shrink-0 flex-col items-center gap-8 border-r px-5 py-3 lg:flex"
       >
         {ICONS.map((type) => (
           <motion.div key={type} variants={iconItem}>

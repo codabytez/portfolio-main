@@ -1,14 +1,4 @@
-type Tech =
-  | "react"
-  | "react-native"
-  | "nextjs"
-  | "html"
-  | "css"
-  | "vue"
-  | "angular"
-  | "gatsby"
-  | "flutter"
-  | "svelte";
+type Tech = string;
 
 interface Project {
   id: number;
@@ -46,6 +36,7 @@ interface ProjectCardProps {
 }
 
 interface ProjectsSidebarProps {
+  techs: TechMeta[];
   selectedTechs: Tech[];
   onToggle: (tech: Tech) => void;
 }

@@ -5,19 +5,6 @@ import { motion, AnimatePresence } from "motion/react";
 import Checkbox from "@/components/ui/Checkbox";
 import NextjsIcon from "@/components/ui/NextjsIcon";
 
-const TECHS: TechMeta[] = [
-  { type: "react", icon: "ri-reactjs-fill", label: "React" },
-  { type: "react-native", icon: "ri-reactjs-fill", label: "React Native" },
-  { type: "nextjs", icon: "ri-server-fill", label: "Next.js" },
-  { type: "html", icon: "ri-html5-fill", label: "HTML" },
-  { type: "css", icon: "ri-css3-fill", label: "CSS" },
-  { type: "vue", icon: "ri-vuejs-fill", label: "Vue" },
-  { type: "svelte", icon: "ri-svelte-fill", label: "Svelte" },
-  { type: "angular", icon: "ri-angularjs-fill", label: "Angular" },
-  { type: "gatsby", icon: "ri-gatsby-fill", label: "Gatsby" },
-  { type: "flutter", icon: "ri-flutter-fill", label: "Flutter" },
-];
-
 const listVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
@@ -28,7 +15,7 @@ const itemVariants = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.2, ease: "easeOut" as const } },
 };
 
-export default function ProjectsSidebar({ selectedTechs, onToggle }: ProjectsSidebarProps) {
+export default function ProjectsSidebar({ techs, selectedTechs, onToggle }: ProjectsSidebarProps) {
   const [open, setOpen] = useState(true);
 
   return (
@@ -68,7 +55,7 @@ export default function ProjectsSidebar({ selectedTechs, onToggle }: ProjectsSid
               animate="visible"
               className="flex flex-col gap-2 p-3"
             >
-              {TECHS.map(({ type, icon, label }) => (
+              {techs.map(({ type, icon, label }) => (
                 <motion.label
                   key={type}
                   variants={itemVariants}
