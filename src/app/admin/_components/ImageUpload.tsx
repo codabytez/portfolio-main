@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useConvex } from "convex/react";
 import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
 
 type Props = {
   value: string;
@@ -11,6 +12,7 @@ type Props = {
 
 export default function ImageUpload({ value, onChange }: Props) {
   const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const convex = useConvex();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -27,8 +29,11 @@ export default function ImageUpload({ value, onChange }: Props) {
       });
       if (!res.ok) throw new Error("Upload failed");
       const { storageId } = await res.json();
-      const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL!.replace(/\/$/, "");
-      onChange(`${convexUrl}/api/storage/${storageId}`);
+      const url = await convex.query(api.storage.getUrl, {
+        storageId: storageId as Id<"_storage">,
+      });
+      if (!url) throw new Error("Could not get storage URL");
+      onChange(url);
     } catch {
       setError("Upload failed. Try again or paste a URL.");
     } finally {

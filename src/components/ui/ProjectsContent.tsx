@@ -10,18 +10,30 @@ import ProjectCardSkeleton from "@/components/ui/ProjectCardSkeleton";
 import ProjectModal, { type ProjectModalData } from "@/components/ui/ProjectModal";
 import ProjectsEmptyState from "@/components/ui/ProjectsEmptyState";
 
-const TECH_LABELS: Record<Tech, string> = {
-  react: "React",
-  "react-native": "React Native",
-  nextjs: "Next.js",
-  html: "HTML",
-  css: "CSS",
-  vue: "Vue",
-  svelte: "Svelte",
-  angular: "Angular",
-  gatsby: "Gatsby",
-  flutter: "Flutter",
+const TECH_META: Record<string, { icon: string; label: string }> = {
+  react: { icon: "ri-reactjs-fill", label: "React" },
+  "react-native": { icon: "ri-reactjs-fill", label: "React Native" },
+  nextjs: { icon: "ri-server-fill", label: "Next.js" },
+  html: { icon: "ri-html5-fill", label: "HTML" },
+  css: { icon: "ri-css3-fill", label: "CSS" },
+  vue: { icon: "ri-vuejs-fill", label: "Vue" },
+  svelte: { icon: "ri-svelte-fill", label: "Svelte" },
 };
+
+const SIDEBAR_DEFAULTS: TechMeta[] = Object.entries(TECH_META).map(([type, { icon, label }]) => ({
+  type,
+  icon,
+  label,
+}));
+
+function toTechMeta(type: string): TechMeta {
+  const known = TECH_META[type];
+  return {
+    type,
+    icon: known?.icon ?? "ri-code-s-slash-fill",
+    label: known?.label ?? type.charAt(0).toUpperCase() + type.slice(1).replace(/-/g, " "),
+  };
+}
 
 const cardVariants = {
   hidden: { opacity: 0, y: 16, scale: 0.97 },
@@ -45,6 +57,18 @@ export default function ProjectsContent() {
 
   const clearFilters = () => setSelectedTechs([]);
 
+  const sidebarTechs = useMemo(() => {
+    const defaultTypes = new Set(SIDEBAR_DEFAULTS.map((t) => t.type));
+    const extras = Array.from(
+      new Set(
+        (projects ?? [])
+          .map((p) => p.primaryTech)
+          .filter((t): t is string => !!t && !defaultTypes.has(t)),
+      ),
+    ).map(toTechMeta);
+    return [...SIDEBAR_DEFAULTS, ...extras];
+  }, [projects]);
+
   const filteredProjects = useMemo(() => {
     if (!projects) return [];
     return selectedTechs.length === 0
@@ -52,12 +76,14 @@ export default function ProjectsContent() {
       : projects.filter((p) => selectedTechs.some((t) => p.tech.includes(t)));
   }, [projects, selectedTechs]);
 
-  const filterLabel = selectedTechs.map((t) => TECH_LABELS[t]).join("; ");
+  const filterLabel = selectedTechs
+    .map((t) => sidebarTechs.find((m) => m.type === t)?.label ?? t)
+    .join("; ");
 
   return (
     <>
       <div className="flex min-h-0 flex-1 flex-col self-stretch overflow-y-auto lg:flex-row lg:items-start lg:overflow-hidden">
-        <ProjectsSidebar selectedTechs={selectedTechs} onToggle={toggleTech} />
+        <ProjectsSidebar techs={sidebarTechs} selectedTechs={selectedTechs} onToggle={toggleTech} />
 
         <div className="flex min-w-0 flex-1 flex-col self-stretch">
           {/* Tab bar — desktop only */}
@@ -104,7 +130,7 @@ export default function ProjectsContent() {
             {projects !== undefined && filteredProjects.length === 0 && (
               <ProjectsEmptyState
                 filtered={selectedTechs.length > 0}
-                filterLabel={selectedTechs[0]}
+                filterLabels={selectedTechs}
               />
             )}
 
@@ -133,7 +159,7 @@ export default function ProjectsContent() {
                       slug={project.slug}
                       description={project.description}
                       image={project.imageUrl}
-                      tech={(project.primaryTech ?? project.tech[0]) as Tech | undefined}
+                      tech={project.primaryTech ?? project.tech[0]}
                       onClick={() =>
                         setActiveProject({
                           name: project.name,
@@ -142,8 +168,8 @@ export default function ProjectsContent() {
                           description: project.description,
                           longDescription: project.longDescription,
                           features: project.features,
-                          tech: project.tech as Tech[],
-                          primaryTech: project.primaryTech as Tech | undefined,
+                          tech: project.tech,
+                          primaryTech: project.primaryTech,
                           liveUrl: project.liveUrl,
                           githubUrl: project.githubUrl,
                         })

@@ -1,6 +1,6 @@
 type Props = {
   filtered: boolean;
-  filterLabel?: string;
+  filterLabels?: string[];
 };
 
 type Token = { text: string; color?: string };
@@ -32,7 +32,7 @@ function BlinkingCursor() {
   );
 }
 
-export default function ProjectsEmptyState({ filtered, filterLabel }: Props) {
+export default function ProjectsEmptyState({ filtered, filterLabels = [] }: Props) {
   const noProjectsLines: Line[] = [
     [{ text: "// _projects.js", color: "text-primitive-slate-500" }],
     [],
@@ -58,36 +58,73 @@ export default function ProjectsEmptyState({ filtered, filterLabel }: Props) {
     ],
   ];
 
-  const tech = filterLabel ?? "selectedTech";
-  const filteredLines: Line[] = [
-    [{ text: "// _projects.js", color: "text-primitive-slate-500" }],
-    [],
-    [
-      { text: "const ", color: "text-primitive-indigo-500" },
-      { text: "results", color: "text-primitive-teal-400" },
-      { text: " = projects", color: "text-theme-foreground" },
-    ],
-    [
-      { text: "  .filter", color: "text-primitive-rose-400" },
-      { text: "(", color: "text-theme-heading-foreground" },
-      { text: "p", color: "text-primitive-orange-400" },
-      { text: " => p.tech", color: "text-theme-foreground" },
-    ],
-    [
-      { text: "    .includes", color: "text-primitive-rose-400" },
-      { text: "(", color: "text-theme-heading-foreground" },
-      { text: `"${tech}"`, color: "text-primitive-teal-400" },
-      { text: "));", color: "text-theme-heading-foreground" },
-    ],
-    [],
-    [
-      { text: "// results", color: "text-primitive-slate-500" },
-      { text: ".length", color: "text-primitive-rose-400" },
-      { text: " === ", color: "text-primitive-slate-500" },
-      { text: "0", color: "text-primitive-orange-400" },
-    ],
-    [{ text: "// Try a different filter.", color: "text-primitive-slate-500" }],
-  ];
+  const single = filterLabels.length === 1;
+  const techList = `[${filterLabels.map((t) => `"${t}"`).join(", ")}]`;
+
+  const filteredLines: Line[] = single
+    ? [
+        [{ text: "// _projects.js", color: "text-primitive-slate-500" }],
+        [],
+        [
+          { text: "const ", color: "text-primitive-indigo-500" },
+          { text: "results", color: "text-primitive-teal-400" },
+          { text: " = projects", color: "text-theme-foreground" },
+        ],
+        [
+          { text: "  .filter", color: "text-primitive-rose-400" },
+          { text: "(", color: "text-theme-heading-foreground" },
+          { text: "p", color: "text-primitive-orange-400" },
+          { text: " => p.tech", color: "text-theme-foreground" },
+        ],
+        [
+          { text: "    .includes", color: "text-primitive-rose-400" },
+          { text: "(", color: "text-theme-heading-foreground" },
+          { text: `"${filterLabels[0]}"`, color: "text-primitive-teal-400" },
+          { text: "));", color: "text-theme-heading-foreground" },
+        ],
+        [],
+        [
+          { text: "// results", color: "text-primitive-slate-500" },
+          { text: ".length", color: "text-primitive-rose-400" },
+          { text: " === ", color: "text-primitive-slate-500" },
+          { text: "0", color: "text-primitive-orange-400" },
+        ],
+        [{ text: "// Try a different filter.", color: "text-primitive-slate-500" }],
+      ]
+    : [
+        [{ text: "// _projects.js", color: "text-primitive-slate-500" }],
+        [],
+        [
+          { text: "const ", color: "text-primitive-indigo-500" },
+          { text: "results", color: "text-primitive-teal-400" },
+          { text: " = projects", color: "text-theme-foreground" },
+        ],
+        [
+          { text: "  .filter", color: "text-primitive-rose-400" },
+          { text: "(", color: "text-theme-heading-foreground" },
+          { text: "p", color: "text-primitive-orange-400" },
+          { text: " =>", color: "text-theme-foreground" },
+        ],
+        [{ text: `    ${techList}`, color: "text-primitive-teal-400" }],
+        [
+          { text: "    .some", color: "text-primitive-rose-400" },
+          { text: "(", color: "text-theme-heading-foreground" },
+          { text: "t", color: "text-primitive-orange-400" },
+          { text: " => p.tech", color: "text-theme-foreground" },
+        ],
+        [
+          { text: "      .includes", color: "text-primitive-rose-400" },
+          { text: "(t)));", color: "text-theme-heading-foreground" },
+        ],
+        [],
+        [
+          { text: "// results", color: "text-primitive-slate-500" },
+          { text: ".length", color: "text-primitive-rose-400" },
+          { text: " === ", color: "text-primitive-slate-500" },
+          { text: "0", color: "text-primitive-orange-400" },
+        ],
+        [{ text: "// Try a different filter.", color: "text-primitive-slate-500" }],
+      ];
 
   const lines = filtered ? filteredLines : noProjectsLines;
 

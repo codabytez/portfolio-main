@@ -32,8 +32,8 @@ export default function HeaderDesktop({ className }: HeaderDesktopProps) {
           .filter(Boolean)
           .join(" ")}
       >
-        <div className="flex items-center gap-32">
-          <div className="flex items-center justify-center px-6 py-5">
+        <div className="flex items-center">
+          <div className="flex items-center justify-center px-6 py-5 lg:w-77.5">
             {profile === undefined ? (
               <Skeleton className="h-4 w-28" />
             ) : (
@@ -43,7 +43,7 @@ export default function HeaderDesktop({ className }: HeaderDesktopProps) {
             )}
           </div>
           <div className="flex items-center">
-            <div className="border-theme-theme-stroke border-r border-l">
+            <div className="border-theme-theme-stroke border-x">
               <MenuItem
                 state={active === "_hello" ? "selected" : "static"}
                 label="_hello"

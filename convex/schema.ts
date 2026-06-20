@@ -1,19 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-const TECH = v.union(
-  v.literal("react"),
-  v.literal("react-native"),
-  v.literal("nextjs"),
-  v.literal("html"),
-  v.literal("css"),
-  v.literal("vue"),
-  v.literal("svelte"),
-  v.literal("angular"),
-  v.literal("gatsby"),
-  v.literal("flutter"),
-);
-
 const SOCIAL_PLATFORM = v.union(
   v.literal("github"),
   v.literal("linkedin"),
@@ -54,8 +41,8 @@ export default defineSchema({
     slug: v.string(), // "_ui-animations"
     description: v.string(),
     imageUrl: v.optional(v.string()),
-    tech: v.array(TECH),
-    primaryTech: v.optional(TECH),
+    tech: v.array(v.string()),
+    primaryTech: v.optional(v.string()),
     longDescription: v.optional(v.string()),
     features: v.optional(v.array(v.string())),
     liveUrl: v.optional(v.string()),

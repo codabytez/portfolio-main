@@ -1,19 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-const TECH = v.union(
-  v.literal("react"),
-  v.literal("react-native"),
-  v.literal("nextjs"),
-  v.literal("html"),
-  v.literal("css"),
-  v.literal("vue"),
-  v.literal("svelte"),
-  v.literal("angular"),
-  v.literal("gatsby"),
-  v.literal("flutter"),
-);
-
 export const list = query({
   args: {},
   handler: async (ctx) => {
@@ -27,8 +14,8 @@ export const create = mutation({
     slug: v.string(),
     description: v.string(),
     imageUrl: v.optional(v.string()),
-    tech: v.array(TECH),
-    primaryTech: v.optional(TECH),
+    tech: v.array(v.string()),
+    primaryTech: v.optional(v.string()),
     longDescription: v.optional(v.string()),
     features: v.optional(v.array(v.string())),
     liveUrl: v.optional(v.string()),
@@ -47,8 +34,8 @@ export const update = mutation({
     slug: v.optional(v.string()),
     description: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
-    tech: v.optional(v.array(TECH)),
-    primaryTech: v.optional(TECH),
+    tech: v.optional(v.array(v.string())),
+    primaryTech: v.optional(v.string()),
     longDescription: v.optional(v.string()),
     features: v.optional(v.array(v.string())),
     liveUrl: v.optional(v.string()),

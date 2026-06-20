@@ -25,7 +25,7 @@ export default function ProjectCard({
         <p className="text-body-md w-full">
           {name && <span className="text-primitive-indigo-500 font-bold">{name}</span>}
           {name && slug && <span className="text-theme-foreground">{" // "}</span>}
-          {slug && <span className="text-theme-foreground">{slug}</span>}
+          {slug && <span className="text-theme-foreground">_{slug}</span>}
         </p>
       )}
 
