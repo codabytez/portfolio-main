@@ -146,6 +146,16 @@ export default function HomeHero() {
             </motion.span>
           ))}
         </p>
+
+        {/* Mobile-only game nudge */}
+        <motion.div
+          className="text-body-sm text-theme-foreground/50 mt-2 flex items-start gap-1.5 md:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: CODE_START + 0.9 }}
+        >
+          <span>{"// games available on desktop"}</span>
+        </motion.div>
       </div>
     </div>
   );
