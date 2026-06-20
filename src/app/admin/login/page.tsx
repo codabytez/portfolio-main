@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -30,36 +32,34 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex h-full items-center justify-center bg-[#0f172b]">
-      <div className="w-full max-w-sm">
-        <div className="mb-8">
-          <p className="text-lg font-medium text-[#f8fafc]">admin panel</p>
-          <p className="text-sm text-[#90a1b9]">portfolio cms</p>
+    <div className="bg-theme-theme-backdrop flex h-full items-center justify-center p-3">
+      <div className="border-theme-theme-stroke bg-theme-theme-background w-full max-w-sm overflow-hidden rounded-xl border">
+        <div className="border-theme-theme-stroke border-b px-8 py-5">
+          <p className="text-body-md text-theme-heading-foreground">_admin</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-[#90a1b9]">password</label>
-            <input
+        <div className="px-8 py-8">
+          <p className="text-theme-foreground mb-8 text-sm">
+            sign in to continue to your portfolio cms.
+          </p>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <Input
+              label="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               autoFocus
-              className="rounded border border-[#314158] bg-[#020618] px-3 py-2 text-sm text-[#f8fafc] outline-none placeholder:text-[#4a5568] focus:border-[#ff9d00]"
+              state={error ? "error" : "static"}
+              errorMessage={error}
             />
-          </div>
 
-          {error && <p className="text-xs text-[#ff637e]">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={loading || !password}
-            className="rounded bg-[#ff9d00] px-4 py-2 text-sm font-medium text-[#020618] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
+            <Button type="submit" variant="primary" disabled={loading || !password}>
+              {loading ? "signing in..." : "sign in"}
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );

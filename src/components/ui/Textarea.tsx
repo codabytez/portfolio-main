@@ -5,6 +5,7 @@ type TextareaState = "static" | "focus" | "error";
 type TextareaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "className"> & {
   className?: string;
   label?: string;
+  hint?: string;
   state?: TextareaState;
   errorMessage?: string;
 };
@@ -18,6 +19,7 @@ const stateClasses: Record<TextareaState, string> = {
 export default function Textarea({
   className,
   label = "Label",
+  hint,
   state = "static",
   errorMessage = "Something went wrong",
   ...props
@@ -26,14 +28,15 @@ export default function Textarea({
 
   return (
     <div
-      className={["flex w-full flex-col items-start gap-[7px]", className]
-        .filter(Boolean)
-        .join(" ")}
+      className={["flex w-full flex-col items-start gap-1.75", className].filter(Boolean).join(" ")}
     >
-      <p className="text-body-md text-theme-foreground w-full">{label}</p>
+      <div className="flex w-full items-baseline gap-2">
+        <p className="text-body-md text-theme-foreground">{label}</p>
+        {hint && <span className="text-theme-foreground/60 text-xs">{hint}</span>}
+      </div>
       <div
         className={[
-          "rounded-3 flex min-h-[120px] w-full items-start gap-[10px] border p-[12px]",
+          "rounded-3 p-button-left-right flex min-h-30 w-full items-start gap-[10px] border",
           stateClasses[state],
         ].join(" ")}
       >

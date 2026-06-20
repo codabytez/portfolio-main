@@ -5,6 +5,7 @@ type InputState = "static" | "focus" | "error";
 type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "className"> & {
   className?: string;
   label?: string;
+  hint?: string;
   state?: InputState;
   errorMessage?: string;
 };
@@ -18,6 +19,7 @@ const stateClasses: Record<InputState, string> = {
 export default function Input({
   className,
   label = "Label",
+  hint,
   state = "static",
   errorMessage = "Something went wrong",
   ...props
@@ -28,7 +30,10 @@ export default function Input({
     <div
       className={["flex w-full flex-col items-start gap-1.75", className].filter(Boolean).join(" ")}
     >
-      <p className="text-body-md text-theme-foreground w-full">{label}</p>
+      <div className="flex w-full items-baseline gap-2">
+        <p className="text-body-md text-theme-foreground">{label}</p>
+        {hint && <span className="text-theme-foreground/60 text-xs">{hint}</span>}
+      </div>
       <div
         className={[
           "rounded-3 p-button-left-right flex w-full items-center gap-[10px] border",
