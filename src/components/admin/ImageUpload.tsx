@@ -60,13 +60,13 @@ export default function ImageUpload({ value, onChange }: Props) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://... or upload below"
-          className="flex-1 rounded border border-[#314158] bg-[#0f172b] px-3 py-2 text-sm text-[#f8fafc] placeholder:text-[#90a1b9]/50 focus:border-[#90a1b9] focus:outline-none"
+          className="border-theme-theme-stroke bg-theme-theme-backdrop text-theme-heading-foreground placeholder:text-theme-foreground/40 focus:border-primitive-slate-500 flex-1 rounded border px-3 py-2.5 text-sm transition-colors focus:outline-none"
         />
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="shrink-0 cursor-pointer rounded border border-[#314158] bg-[#0f172b] px-3 py-2 text-sm text-[#90a1b9] transition-colors hover:border-[#90a1b9] hover:text-[#f8fafc] disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-theme-theme-stroke bg-theme-theme-backdrop text-theme-foreground hover:border-primitive-slate-500 hover:text-theme-heading-foreground shrink-0 cursor-pointer rounded border px-3 py-2.5 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           {uploading ? "Uploading..." : "Upload"}
         </button>
@@ -81,7 +81,7 @@ export default function ImageUpload({ value, onChange }: Props) {
 
       {value && (
         <div
-          className="relative h-32 w-full overflow-hidden rounded border border-[#314158]"
+          className="border-theme-theme-stroke relative h-32 w-full overflow-hidden rounded border"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
         >
@@ -90,7 +90,7 @@ export default function ImageUpload({ value, onChange }: Props) {
           <button
             type="button"
             onClick={() => onChange("")}
-            className="absolute top-2 right-2 cursor-pointer rounded bg-[#020618]/70 px-2 py-0.5 text-xs text-[#f8fafc] hover:bg-[#020618]"
+            className="bg-theme-theme-backdrop/80 text-theme-heading-foreground hover:bg-theme-theme-backdrop absolute top-2 right-2 cursor-pointer rounded px-2 py-0.5 text-xs"
           >
             Remove
           </button>
@@ -99,7 +99,7 @@ export default function ImageUpload({ value, onChange }: Props) {
 
       {!value && (
         <div
-          className="flex h-20 items-center justify-center rounded border border-dashed border-[#314158] text-sm text-[#637b96]"
+          className="border-theme-theme-stroke text-theme-foreground flex h-20 items-center justify-center rounded border border-dashed text-sm"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
         >
@@ -107,7 +107,7 @@ export default function ImageUpload({ value, onChange }: Props) {
         </div>
       )}
 
-      {error && <p className="text-xs text-[#ff637e]">{error}</p>}
+      {error && <p className="text-primitive-rose-400 text-xs">{error}</p>}
     </div>
   );
 }

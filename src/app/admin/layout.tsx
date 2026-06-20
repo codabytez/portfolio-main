@@ -1,3 +1,3 @@
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
-  return <div className="h-full bg-[#0f172b]">{children}</div>;
+  return <div className="bg-theme-theme-backdrop h-full">{children}</div>;
 }

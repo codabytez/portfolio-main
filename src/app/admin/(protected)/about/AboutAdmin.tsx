@@ -3,32 +3,32 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { Field, Textarea } from "../../_components/Field";
-import SaveButton from "../../_components/SaveButton";
+import Textarea from "@/components/ui/Textarea";
+import SaveButton from "@/components/admin/SaveButton";
 
 const SECTIONS = [
   {
-    group: "Personal",
+    group: "personal",
     items: [
-      { key: "bio", title: "Bio" },
-      { key: "interests", title: "Interests" },
-      { key: "education", title: "Education" },
+      { key: "bio", title: "bio" },
+      { key: "interests", title: "interests" },
+      { key: "education", title: "education" },
     ],
   },
   {
-    group: "Professional",
+    group: "professional",
     items: [
-      { key: "experience", title: "Experience" },
-      { key: "skills", title: "Skills" },
-      { key: "certificates", title: "Certificates" },
+      { key: "experience", title: "experience" },
+      { key: "skills", title: "skills" },
+      { key: "certificates", title: "certificates" },
     ],
   },
   {
-    group: "Hobbies",
+    group: "hobbies",
     items: [
-      { key: "music", title: "Music" },
-      { key: "movies", title: "Movies" },
-      { key: "games", title: "Games" },
+      { key: "music", title: "music" },
+      { key: "movies", title: "movies" },
+      { key: "games", title: "games" },
     ],
   },
 ] as const;
@@ -49,20 +49,23 @@ function SectionEditor({ sectionKey, title }: { sectionKey: Key; title: string }
   }
 
   return (
-    <div className="rounded border border-[#314158] bg-[#0a1628] p-4">
-      <p className="mb-3 text-sm font-medium text-[#f8fafc]">{title}</p>
-      <Field label="Content" hint="each line becomes a comment line in the editor">
-        <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows={6}
-          placeholder={`Write about ${title.toLowerCase()} here...\nEach line becomes a comment line.`}
-          className="w-full font-mono"
-        />
-      </Field>
-      <div className="mt-3">
+    <div className="border-theme-theme-stroke bg-theme-theme-backdrop rounded-lg border p-5">
+      <p className="text-theme-foreground mb-4 text-xs tracking-widest">
+        {"// "}
+        {title}
+      </p>
+      <Textarea
+        label="content"
+        hint="each line becomes a comment line in the editor"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows={5}
+        placeholder={`Write about ${title} here...\nEach line becomes a comment line.`}
+        className="font-mono"
+      />
+      <div className="border-theme-theme-stroke mt-4 border-t pt-4">
         <SaveButton
-          label="Save"
+          label="save"
           onSave={() => upsert({ key: sectionKey, title, content: content.trim() })}
         />
       </div>
@@ -73,19 +76,18 @@ function SectionEditor({ sectionKey, title }: { sectionKey: Key; title: string }
 export default function AboutAdmin() {
   return (
     <div className="max-w-2xl">
-      <h1 className="mb-2 text-xl font-semibold text-[#f8fafc]">About Sections</h1>
-      <p className="mb-8 text-sm text-[#90a1b9]">
-        Each section appears as a JSDoc comment in the about page editor. Write plain text — one
-        thought per line.
+      <p className="text-theme-foreground mb-8 text-sm">
+        {"// each section appears as a JSDoc comment in the about page."}
       </p>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-10">
         {SECTIONS.map(({ group, items }) => (
           <div key={group}>
-            <p className="mb-3 text-xs font-semibold tracking-widest text-[#90a1b9] uppercase">
+            <p className="text-theme-foreground mb-4 text-xs tracking-widest">
+              {"// "}
               {group}
             </p>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {items.map(({ key, title }) => (
                 <SectionEditor key={key} sectionKey={key} title={title} />
               ))}

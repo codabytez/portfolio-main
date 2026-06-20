@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { Field, Input, Textarea } from "../../_components/Field";
-import SaveButton from "../../_components/SaveButton";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import SaveButton from "@/components/admin/SaveButton";
 
 type Overrides = { name?: string; slug?: string; tagline?: string };
 
@@ -22,30 +23,44 @@ export default function ProfileAdmin() {
   const tagline = overrides.tagline ?? profile?.tagline ?? "";
 
   return (
-    <div className="max-w-lg">
-      <h1 className="mb-6 text-xl font-semibold text-[#f8fafc]">Profile</h1>
+    <div className="max-w-xl">
+      <p className="text-theme-foreground mb-8 text-sm">
+        {"// basic info shown on your portfolio."}
+      </p>
 
-      <div className="flex flex-col gap-5">
-        <Field label="Full name" hint="shown in hero and page title">
-          <Input value={name} onChange={set("name")} placeholder="Michael Weaver" />
-        </Field>
+      <div className="border-theme-theme-stroke bg-theme-theme-backdrop rounded-lg border p-6">
+        <div className="flex flex-col gap-6">
+          <Input
+            label="full name"
+            hint="shown in hero and page title"
+            value={name}
+            onChange={set("name")}
+            placeholder="Michael Weaver"
+          />
 
-        <Field label="Slug" hint="used in header link (no spaces)">
-          <Input value={slug} onChange={set("slug")} placeholder="michael-weaver" />
-        </Field>
+          <Input
+            label="slug"
+            hint="used in header link (no spaces)"
+            value={slug}
+            onChange={set("slug")}
+            placeholder="michael-weaver"
+          />
 
-        <Field label="Tagline" hint="shown under name on home page">
           <Textarea
+            label="tagline"
+            hint="shown under name on home page"
             value={tagline}
             onChange={set("tagline")}
-            rows={3}
+            rows={4}
             placeholder="Full-stack developer..."
           />
-        </Field>
+        </div>
 
-        <SaveButton
-          onSave={() => upsert({ name: name.trim(), slug: slug.trim(), tagline: tagline.trim() })}
-        />
+        <div className="border-theme-theme-stroke mt-6 border-t pt-6">
+          <SaveButton
+            onSave={() => upsert({ name: name.trim(), slug: slug.trim(), tagline: tagline.trim() })}
+          />
+        </div>
       </div>
     </div>
   );
