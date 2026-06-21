@@ -92,13 +92,13 @@ const ProjectForm = forwardRef<
         <Input label="name" value={f.name} onChange={set("name")} placeholder="My Project" />
         <Input label="slug" value={f.slug} onChange={set("slug")} placeholder="my-project" />
       </div>
-      <Textarea
+      <Input
         label="card description"
         hint="short — shown on the project card"
         value={f.description}
         onChange={set("description")}
-        rows={2}
         placeholder="One-liner about what this does..."
+        maxLength={120}
       />
       <Textarea
         label="full description"
