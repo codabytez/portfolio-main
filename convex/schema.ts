@@ -48,6 +48,7 @@ export default defineSchema({
     liveUrl: v.optional(v.string()),
     githubUrl: v.optional(v.string()),
     order: v.number(),
+    published: v.optional(v.boolean()),
   }),
 
   // Singleton — contact details

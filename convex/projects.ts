@@ -9,6 +9,14 @@ export const list = query({
   },
 });
 
+export const listPublished = query({
+  args: {},
+  handler: async (ctx) => {
+    const projects = await ctx.db.query("projects").collect();
+    return projects.filter((p) => p.published !== false).sort((a, b) => a.order - b.order);
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -22,6 +30,7 @@ export const create = mutation({
     liveUrl: v.optional(v.string()),
     githubUrl: v.optional(v.string()),
     order: v.number(),
+    published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("projects", args);
@@ -42,6 +51,7 @@ export const update = mutation({
     liveUrl: v.optional(v.string()),
     githubUrl: v.optional(v.string()),
     order: v.optional(v.number()),
+    published: v.optional(v.boolean()),
   },
   handler: async (ctx, { id, ...fields }) => {
     await ctx.db.patch(id, fields);

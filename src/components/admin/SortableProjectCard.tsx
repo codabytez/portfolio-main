@@ -10,18 +10,22 @@ type Project = {
   description: string;
   tech: string[];
   imageUrl?: string;
+  published?: boolean;
 };
 
 type Props = {
   p: Project;
   onEdit: () => void;
   onDelete: () => void;
+  onTogglePublish: () => void;
 };
 
-export default function SortableProjectCard({ p, onEdit, onDelete }: Props) {
+export default function SortableProjectCard({ p, onEdit, onDelete, onTogglePublish }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: p._id,
   });
+
+  const isPublished = p.published !== false;
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -31,7 +35,13 @@ export default function SortableProjectCard({ p, onEdit, onDelete }: Props) {
 
   return (
     <div ref={setNodeRef} style={style}>
-      <div className="border-theme-theme-stroke bg-theme-theme-backdrop hover:border-primitive-slate-600 flex items-start gap-3 rounded-lg border p-4 transition-colors">
+      <div
+        className={[
+          "flex items-start gap-3 rounded-lg border p-4 transition-colors",
+          "bg-theme-theme-backdrop hover:border-primitive-slate-600",
+          isPublished ? "border-theme-theme-stroke" : "border-primitive-slate-700 opacity-60",
+        ].join(" ")}
+      >
         <button
           {...attributes}
           {...listeners}
@@ -46,7 +56,14 @@ export default function SortableProjectCard({ p, onEdit, onDelete }: Props) {
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-theme-heading-foreground font-medium">{p.name}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-theme-heading-foreground font-medium">{p.name}</p>
+            {!isPublished && (
+              <span className="bg-primitive-slate-800 text-primitive-slate-400 rounded px-1.5 py-0.5 text-[10px] tracking-wide">
+                draft
+              </span>
+            )}
+          </div>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {p.tech.map((t) => (
               <span
@@ -62,6 +79,20 @@ export default function SortableProjectCard({ p, onEdit, onDelete }: Props) {
           )}
         </div>
         <div className="ml-1 flex shrink-0 items-center gap-1">
+          <button
+            onClick={onTogglePublish}
+            title={isPublished ? "Set as draft" : "Publish"}
+            className={[
+              "cursor-pointer rounded p-1.5 transition-colors",
+              isPublished
+                ? "text-primitive-teal-400 hover:bg-primitive-slate-800 hover:text-primitive-teal-300"
+                : "text-primitive-slate-500 hover:bg-primitive-slate-800 hover:text-primitive-teal-400",
+            ].join(" ")}
+          >
+            <i
+              className={`${isPublished ? "ri-eye-line" : "ri-eye-off-line"} text-base leading-none`}
+            />
+          </button>
           <button
             onClick={onEdit}
             title="Edit"

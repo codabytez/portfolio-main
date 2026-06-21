@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
 import Textarea from "@/components/ui/Textarea";
-import SaveButton from "@/components/admin/SaveButton";
+import Button from "@/components/ui/Button";
+import { toast } from "sonner";
 
 const SECTIONS = [
   {
@@ -40,12 +41,34 @@ function SectionEditor({ sectionKey, title }: { sectionKey: Key; title: string }
   const upsert = useMutation(api.about.upsert);
 
   const existing = sections?.find((s) => s.key === sectionKey);
-  const [content, setContent] = useState("");
-  const [loaded, setLoaded] = useState(false);
 
-  if (existing && !loaded) {
-    setContent(existing.content);
-    setLoaded(true);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const content = draft ?? existing?.content ?? "";
+
+  function handleEdit() {
+    setDraft(existing?.content ?? "");
+    setEditing(true);
+  }
+
+  function handleCancel() {
+    setDraft(null);
+    setEditing(false);
+  }
+
+  async function handleSave() {
+    if (draft === null) return;
+    setSaving(true);
+    try {
+      await upsert({ key: sectionKey, title, content: draft.trim() });
+      setDraft(null);
+      setEditing(false);
+      toast.success(`${title} saved.`);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -55,19 +78,34 @@ function SectionEditor({ sectionKey, title }: { sectionKey: Key; title: string }
         {title}
       </p>
       <Textarea
+        key={String(editing)}
         label="content"
         hint="each line becomes a comment line in the editor"
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => setDraft(e.target.value)}
+        readOnly={!editing}
+        autoFocus={editing}
         rows={5}
         placeholder={`Write about ${title} here...\nEach line becomes a comment line.`}
         className="font-mono"
       />
-      <div className="border-theme-theme-stroke mt-4 border-t pt-4">
-        <SaveButton
-          label="save"
-          onSave={() => upsert({ key: sectionKey, title, content: content.trim() })}
-        />
+      <div className="border-theme-theme-stroke mt-4 flex items-center justify-end gap-3 border-t pt-4">
+        {!editing ? (
+          <Button variant="default" onClick={handleEdit}>
+            <i className="ri-pencil-line mr-1.5 text-[14px]" />
+            edit
+          </Button>
+        ) : (
+          <>
+            <Button variant="default" onClick={handleCancel} disabled={saving}>
+              cancel
+            </Button>
+            <Button variant="primary" onClick={handleSave} disabled={saving}>
+              {saving && <i className="ri-loader-4-line mr-1.5 animate-spin text-[14px]" />}
+              {saving ? "saving..." : "save"}
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -36,6 +36,9 @@ export default function ProjectsAdmin() {
     new Set([...SEED_TAGS, ...(projects ?? []).flatMap((p) => p.tech)]),
   ).sort();
 
+  const [optimisticProjects, setOptimisticProjects] = useState<Project[] | null>(null);
+  const displayProjects = optimisticProjects ?? projects;
+
   const [formModal, setFormModal] = useState<
     { mode: "add" } | { mode: "edit"; project: Project } | null
   >(null);
@@ -46,7 +49,7 @@ export default function ProjectsAdmin() {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
-  async function handleCreate(f: FormState) {
+  async function handleCreate(f: FormState, published: boolean) {
     await create({
       name: f.name.trim(),
       slug: f.slug.trim(),
@@ -59,11 +62,12 @@ export default function ProjectsAdmin() {
       liveUrl: f.liveUrl.trim() || undefined,
       githubUrl: f.githubUrl.trim() || undefined,
       order: projects?.length ?? 0,
+      published,
     });
     setFormModal(null);
   }
 
-  async function handleUpdate(id: Id<"projects">, f: FormState) {
+  async function handleUpdate(id: Id<"projects">, f: FormState, published: boolean) {
     await update({
       id,
       name: f.name.trim(),
@@ -77,6 +81,7 @@ export default function ProjectsAdmin() {
       liveUrl: f.liveUrl.trim() || undefined,
       githubUrl: f.githubUrl.trim() || undefined,
       order: parseInt(f.order) || 0,
+      published,
     });
     setFormModal(null);
   }
@@ -87,7 +92,12 @@ export default function ProjectsAdmin() {
     const oldIndex = projects.findIndex((p) => p._id === active.id);
     const newIndex = projects.findIndex((p) => p._id === over.id);
     const reordered = arrayMove(projects, oldIndex, newIndex);
-    await Promise.all(reordered.map((p, i) => update({ id: p._id, order: i })));
+    setOptimisticProjects(reordered);
+    try {
+      await Promise.all(reordered.map((p, i) => update({ id: p._id, order: i })));
+    } finally {
+      setOptimisticProjects(null);
+    }
   }
 
   return (
@@ -107,19 +117,22 @@ export default function ProjectsAdmin() {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext
-          items={(projects ?? []).map((p) => p._id)}
+          items={(displayProjects ?? []).map((p) => p._id)}
           strategy={verticalListSortingStrategy}
         >
           <div className="flex flex-col gap-3">
-            {projects?.map((p) => (
+            {displayProjects?.map((p) => (
               <SortableProjectCard
                 key={p._id}
                 p={p}
                 onEdit={() => setFormModal({ mode: "edit", project: p })}
                 onDelete={() => setDeleteTarget({ id: p._id, name: p.name })}
+                onTogglePublish={() =>
+                  update({ id: p._id, published: p.published === false ? true : false })
+                }
               />
             ))}
-            {projects?.length === 0 && (
+            {displayProjects?.length === 0 && (
               <p className="text-theme-foreground/70 py-8 text-center text-sm">
                 No projects yet. Click &quot;+ add project&quot; to get started.
               </p>
@@ -132,7 +145,7 @@ export default function ProjectsAdmin() {
         <ProjectFormModal
           title="_add-project"
           onClose={() => setFormModal(null)}
-          onSave={() => formRef.current!.save()}
+          onSave={(published) => formRef.current!.save(published)}
         >
           <ProjectForm
             ref={formRef}
@@ -147,7 +160,7 @@ export default function ProjectsAdmin() {
         <ProjectFormModal
           title="_edit-project"
           onClose={() => setFormModal(null)}
-          onSave={() => formRef.current!.save()}
+          onSave={(published) => formRef.current!.save(published)}
         >
           <ProjectForm
             ref={formRef}
@@ -164,7 +177,7 @@ export default function ProjectsAdmin() {
               githubUrl: formModal.project.githubUrl ?? "",
               order: String(formModal.project.order),
             }}
-            onSave={(f) => handleUpdate(formModal.project._id, f)}
+            onSave={(f, published) => handleUpdate(formModal.project._id, f, published)}
             allTags={allTags}
           />
         </ProjectFormModal>

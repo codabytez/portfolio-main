@@ -66,18 +66,25 @@ export const emptyFormState: FormState = {
   order: "0",
 };
 
-export type ProjectFormHandle = { save: () => Promise<void> };
+export type ProjectFormHandle = { save: (published: boolean) => Promise<void> };
 
 const ProjectForm = forwardRef<
   ProjectFormHandle,
-  { initial: FormState; onSave: (f: FormState) => Promise<void>; allTags: string[] }
+  {
+    initial: FormState;
+    onSave: (f: FormState, published: boolean) => Promise<void>;
+    allTags: string[];
+  }
 >(function ProjectForm({ initial, onSave, allTags }, ref) {
   const [f, setF] = useState(initial);
   const set =
     (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setF((prev) => ({ ...prev, [k]: e.target.value }));
 
-  useImperativeHandle(ref, () => ({ save: () => onSave(f) }), [f, onSave]);
+  useImperativeHandle(ref, () => ({ save: (published: boolean) => onSave(f, published) }), [
+    f,
+    onSave,
+  ]);
 
   return (
     <div className="flex flex-col gap-5">
