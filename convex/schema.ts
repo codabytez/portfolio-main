@@ -57,6 +57,28 @@ export default defineSchema({
     phone: v.optional(v.string()),
   }),
 
+  // Spotify top tracks + artists, refreshed daily by scheduled action
+  spotifySnapshot: defineTable({
+    topTracks: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        artist: v.string(),
+        albumArt: v.optional(v.string()),
+        url: v.string(),
+      }),
+    ),
+    topArtists: v.array(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        image: v.optional(v.string()),
+        url: v.string(),
+      }),
+    ),
+    fetchedAt: v.number(),
+  }),
+
   // Social links used across header, footer, and contact sidebar
   socials: defineTable({
     platform: SOCIAL_PLATFORM,

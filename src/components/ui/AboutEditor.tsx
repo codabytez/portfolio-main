@@ -1,9 +1,11 @@
+type Line = string | { text: string; href: string };
+
 type AboutEditorProps = {
-  lines?: string[];
+  lines?: Line[];
   className?: string;
 };
 
-const DEFAULT_LINES = ["/**", " * Select a file to view.", " */"];
+const DEFAULT_LINES: Line[] = ["/**", " * Select a file to view.", " */"];
 
 export default function AboutEditor({ lines = DEFAULT_LINES, className }: AboutEditorProps) {
   return (
@@ -26,11 +28,24 @@ export default function AboutEditor({ lines = DEFAULT_LINES, className }: AboutE
 
       {/* Code content */}
       <div className="text-body-lg text-theme-foreground min-w-0 whitespace-pre-wrap">
-        {lines.map((line, i) => (
-          <p key={i} className="leading-6.75">
-            {line}
-          </p>
-        ))}
+        {lines.map((line, i) =>
+          typeof line === "string" ? (
+            <p key={i} className="leading-6.75">
+              {line}
+            </p>
+          ) : (
+            <p key={i} className="leading-6.75">
+              <a
+                href={line.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-theme-link-foreground underline-offset-2 hover:underline"
+              >
+                {line.text}
+              </a>
+            </p>
+          ),
+        )}
       </div>
     </div>
   );

@@ -10,9 +10,11 @@
 
 import type * as about from "../about.js";
 import type * as contact from "../contact.js";
+import type * as crons from "../crons.js";
 import type * as profile from "../profile.js";
 import type * as projects from "../projects.js";
 import type * as socials from "../socials.js";
+import type * as spotify from "../spotify.js";
 import type * as storage from "../storage.js";
 
 import type {
@@ -24,9 +26,11 @@ import type {
 declare const fullApi: ApiFromModules<{
   about: typeof about;
   contact: typeof contact;
+  crons: typeof crons;
   profile: typeof profile;
   projects: typeof projects;
   socials: typeof socials;
+  spotify: typeof spotify;
   storage: typeof storage;
 }>;
 
