@@ -119,11 +119,6 @@ function PersonalInfoContent({ open, onToggle }: { open?: boolean; onToggle?: ()
         folderColor="text-primitive-teal-400"
         onOpen={() => openTab("interests")}
       />
-      <DropdownTitle
-        title="education"
-        folderColor="text-primitive-indigo-500"
-        onOpen={() => openTab("education")}
-      />
     </AccordionSection>
   );
 }

@@ -11,7 +11,6 @@ const SOCIAL_PLATFORM = v.union(
 const ABOUT_KEY = v.union(
   v.literal("bio"),
   v.literal("interests"),
-  v.literal("education"),
   v.literal("experience"),
   v.literal("skills"),
   v.literal("certificates"),
