@@ -13,7 +13,6 @@ const SECTIONS = [
     items: [
       { key: "bio", title: "bio" },
       { key: "interests", title: "interests" },
-      { key: "education", title: "education" },
     ],
   },
   {

@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
+import NowPlaying from "@/components/ui/NowPlaying";
 
 export default function HomeHero() {
   const profile = useQuery(api.profile.get);
@@ -29,7 +30,7 @@ export default function HomeHero() {
   ];
 
   return (
-    <div className="relative flex w-full flex-col items-start gap-18.75 lg:min-w-0 lg:flex-1 xl:w-126 xl:flex-none">
+    <div className="relative flex w-full flex-col items-start gap-6 lg:min-w-0 lg:flex-1 xl:w-126 xl:flex-none">
       {/* Introduction */}
       <div className="flex w-full flex-col items-start gap-2">
         <motion.p
@@ -111,51 +112,56 @@ export default function HomeHero() {
         </div>
       </div>
 
-      {/* Code block */}
-      <div className="flex w-full flex-col items-start gap-3">
-        <motion.p
-          className="text-body-md text-theme-foreground hidden w-full md:block"
-          initial={{ opacity: 0, x: -28 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", stiffness: 360, damping: 28, delay: CODE_START }}
-        >
-          {"// complete the game to continue"}
-        </motion.p>
+      {/* Now playing + code block */}
+      <div className="flex w-full flex-col items-start gap-5">
+        <NowPlaying delay={CODE_START + 0.1} />
 
-        <motion.p
-          className="text-body-sm text-theme-foreground md:text-body-md w-full"
-          initial={{ opacity: 0, x: -28 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", stiffness: 360, damping: 28, delay: CODE_START + 0.15 }}
-        >
-          {"// find my profile on Github:"}
-        </motion.p>
+        {/* Code block */}
+        <div className="flex w-full flex-col items-start gap-3">
+          <motion.p
+            className="text-body-md text-theme-foreground hidden w-full md:block"
+            initial={{ opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: "spring", stiffness: 360, damping: 28, delay: CODE_START }}
+          >
+            {"// complete the game to continue"}
+          </motion.p>
 
-        {/* const line - per-token fade */}
-        <p className="text-body-sm md:text-body-md w-full">
-          {constTokens.map(({ text, className, href }, i) => (
-            <motion.span
-              key={i}
-              className={className}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.25, delay: CODE_START + 0.32 + i * 0.12 }}
-              {...(href ? { onClick: () => window.open(href, "_blank"), role: "link" } : {})}
-            >
-              {text}
-            </motion.span>
-          ))}
-        </p>
+          <motion.p
+            className="text-body-sm text-theme-foreground md:text-body-md w-full"
+            initial={{ opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: "spring", stiffness: 360, damping: 28, delay: CODE_START + 0.15 }}
+          >
+            {"// find my profile on Github:"}
+          </motion.p>
 
-        {/* Mobile-only game nudge */}
-        <motion.div
-          className="text-body-sm text-theme-foreground/50 mt-2 flex items-start gap-1.5 md:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: CODE_START + 0.9 }}
-        >
-          <span>{"// games available on desktop"}</span>
-        </motion.div>
+          {/* const line - per-token fade */}
+          <p className="text-body-sm md:text-body-md w-full">
+            {constTokens.map(({ text, className, href }, i) => (
+              <motion.span
+                key={i}
+                className={className}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25, delay: CODE_START + 0.32 + i * 0.12 }}
+                {...(href ? { onClick: () => window.open(href, "_blank"), role: "link" } : {})}
+              >
+                {text}
+              </motion.span>
+            ))}
+          </p>
+
+          {/* Mobile-only game nudge */}
+          <motion.div
+            className="text-body-sm text-theme-foreground/50 mt-2 flex items-start gap-1.5 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: CODE_START + 0.9 }}
+          >
+            <span>{"// games available on desktop"}</span>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -16,16 +16,16 @@ type AboutContextValue = {
 const AboutContext = createContext<AboutContextValue>({
   selected: "personal info",
   setSelected: () => {},
-  tabs: ["education"],
-  activeTab: "education",
+  tabs: ["bio"],
+  activeTab: "bio",
   openTab: () => {},
   closeTab: () => {},
 });
 
 export function AboutProvider({ children }: { children: React.ReactNode }) {
   const [selected, setSelected] = useState<AboutIconType>("personal info");
-  const [tabs, setTabs] = useState<string[]>(["education"]);
-  const [activeTab, setActiveTab] = useState("education");
+  const [tabs, setTabs] = useState<string[]>(["bio"]);
+  const [activeTab, setActiveTab] = useState("bio");
 
   function openTab(name: string) {
     setTabs((prev) => (prev.includes(name) ? prev : [...prev, name]));
