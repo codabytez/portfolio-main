@@ -45,7 +45,9 @@ export default function FooterDesktop({ className }: FooterDesktopProps) {
         <EasterEggIcon />
       </div>
       <div className="border-theme-theme-stroke border-l">
-        <MenuItem state="icon" label={githubUsername} />
+        <a href={github?.url} target="_blank" rel="noopener noreferrer">
+          <MenuItem state="icon" label={githubUsername} />
+        </a>
       </div>
     </div>
   );
