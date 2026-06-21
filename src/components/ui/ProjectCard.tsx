@@ -17,7 +17,9 @@ export default function ProjectCard({
 }: ProjectCardProps & { onClick?: () => void }) {
   return (
     <motion.div
-      className={["group flex flex-col items-start gap-4", className].filter(Boolean).join(" ")}
+      className={["group flex h-full flex-col items-start gap-4", className]
+        .filter(Boolean)
+        .join(" ")}
       whileHover="hovered"
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
     >
@@ -37,7 +39,7 @@ export default function ProjectCard({
           },
         }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-        className="rounded-4 relative flex w-full flex-col items-start"
+        className="rounded-4 relative flex w-full flex-1 flex-col items-start"
       >
         <div className="border-primitive-slate-800 rounded-t-4 relative h-36.25 w-full overflow-hidden border">
           <Image
@@ -47,8 +49,8 @@ export default function ProjectCard({
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
         </div>
-        <div className="border-primitive-slate-800 bg-primitive-slate-950 rounded-b-4 flex w-full flex-col items-start gap-5.25 border-x border-b p-7">
-          <p className="text-body-lg text-theme-foreground">{description}</p>
+        <div className="border-primitive-slate-800 bg-primitive-slate-950 rounded-b-4 flex w-full flex-1 flex-col items-start gap-5.25 border-x border-b p-7">
+          <p className="text-body-lg text-theme-foreground flex-1">{description}</p>
           <Button
             variant="default"
             onClick={onClick ?? (href ? () => window.open(href, "_blank") : undefined)}

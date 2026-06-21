@@ -7,12 +7,12 @@ import Button from "@/components/ui/Button";
 type Props = {
   title: string;
   onClose: () => void;
-  onSave: () => Promise<void>;
+  onSave: (published: boolean) => Promise<void>;
   children: React.ReactNode;
 };
 
 export default function ProjectFormModal({ title, onClose, onSave, children }: Props) {
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState<false | "draft" | "publish">(false);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -22,10 +22,10 @@ export default function ProjectFormModal({ title, onClose, onSave, children }: P
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose, saving]);
 
-  async function handleSave() {
-    setSaving(true);
+  async function handleSave(published: boolean) {
+    setSaving(published ? "publish" : "draft");
     try {
-      await onSave();
+      await onSave(published);
     } finally {
       setSaving(false);
     }
@@ -48,7 +48,7 @@ export default function ProjectFormModal({ title, onClose, onSave, children }: P
           <p className="text-theme-heading-foreground text-sm font-medium">{title}</p>
           <button
             onClick={onClose}
-            disabled={saving}
+            disabled={!!saving}
             className="text-theme-foreground hover:text-theme-heading-foreground cursor-pointer transition-colors disabled:opacity-50"
           >
             <i className="ri-close-line text-lg leading-none" />
@@ -58,12 +58,20 @@ export default function ProjectFormModal({ title, onClose, onSave, children }: P
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</div>
 
         <div className="border-theme-theme-stroke flex shrink-0 items-center justify-end gap-3 border-t px-5 py-4 sm:px-6">
-          <Button variant="default" onClick={onClose} disabled={saving}>
+          <Button variant="default" onClick={onClose} disabled={!!saving}>
             cancel
           </Button>
-          <Button variant="primary" onClick={handleSave} disabled={saving}>
-            {saving && <i className="ri-loader-4-line mr-1.5 animate-spin text-[14px]" />}
-            {saving ? "saving..." : "save project"}
+          <Button variant="default" onClick={() => handleSave(false)} disabled={!!saving}>
+            {saving === "draft" && (
+              <i className="ri-loader-4-line mr-1.5 animate-spin text-[14px]" />
+            )}
+            {saving === "draft" ? "saving..." : "save as draft"}
+          </Button>
+          <Button variant="primary" onClick={() => handleSave(true)} disabled={!!saving}>
+            {saving === "publish" && (
+              <i className="ri-loader-4-line mr-1.5 animate-spin text-[14px]" />
+            )}
+            {saving === "publish" ? "publishing..." : "publish"}
           </Button>
         </div>
       </div>

@@ -46,7 +46,7 @@ const cardVariants = {
 };
 
 export default function ProjectsContent() {
-  const projects = useQuery(api.projects.list);
+  const projects = useQuery(api.projects.listPublished);
   const [selectedTechs, setSelectedTechs] = useState<Tech[]>([]);
   const [activeProject, setActiveProject] = useState<ProjectModalData | null>(null);
 
@@ -152,7 +152,7 @@ export default function ProjectsContent() {
                     }}
                     layout
                     transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                    className="w-full"
+                    className="h-full w-full"
                   >
                     <ProjectCard
                       name={project.name}
