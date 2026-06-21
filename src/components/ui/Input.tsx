@@ -36,12 +36,14 @@ export default function Input({
       </div>
       <div
         className={[
-          "rounded-3 p-button-left-right flex w-full items-center gap-[10px] border",
-          stateClasses[state],
+          "rounded-3 p-button-left-right flex w-full items-center gap-[10px] border transition-colors",
+          props.readOnly
+            ? "border-theme-theme-stroke/30 bg-transparent"
+            : `${stateClasses[state]} focus-within:border-primitive-slate-400`,
         ].join(" ")}
       >
         <input
-          className="text-body-md text-theme-foreground w-full bg-transparent outline-none"
+          className="text-body-md text-theme-foreground w-full bg-transparent outline-none read-only:cursor-default read-only:select-none"
           {...props}
         />
         {isError && (
