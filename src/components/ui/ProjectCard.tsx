@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
 import TechIconBox from "@/components/ui/TechIconBox";
@@ -15,6 +16,8 @@ export default function ProjectCard({
   href,
   onClick,
 }: ProjectCardProps & { onClick?: () => void }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+
   return (
     <motion.div
       className={["group flex h-full flex-col items-start gap-4", className]
@@ -42,11 +45,18 @@ export default function ProjectCard({
         className="rounded-4 relative flex w-full flex-1 flex-col items-start"
       >
         <div className="border-primitive-slate-800 rounded-t-4 relative h-36.25 w-full overflow-hidden border">
+          {!imgLoaded && (
+            <div className="bg-primitive-slate-800/60 absolute inset-0 animate-pulse" />
+          )}
           <Image
             src={image}
             alt={name ?? ""}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className={[
+              "object-cover transition-all duration-500 group-hover:scale-110",
+              imgLoaded ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+            onLoad={() => setImgLoaded(true)}
           />
         </div>
         <div className="border-primitive-slate-800 bg-primitive-slate-950 rounded-b-4 flex w-full flex-1 flex-col items-start gap-5.25 border-x border-b p-7">
