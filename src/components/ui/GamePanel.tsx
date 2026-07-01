@@ -8,6 +8,10 @@ import GameOfLifeContent from "@/components/ui/GameOfLifeContent";
 import TicTacToeContent from "@/components/ui/TicTacToeContent";
 import ArkanoidContent from "@/components/ui/ArkanoidContent";
 import SudokuContent from "@/components/ui/SudokuContent";
+import TetrisContent from "@/components/ui/TetrisContent";
+import SpaceInvadersContent from "@/components/ui/SpaceInvadersContent";
+import MinesweeperContent from "@/components/ui/MinesweeperContent";
+import Game2048Content from "@/components/ui/Game2048Content";
 
 export default function GamePanel({ className }: { className?: string }) {
   const [activeGame, setActiveGame] = useState<GameId>("arkanoid");
@@ -39,6 +43,10 @@ export default function GamePanel({ className }: { className?: string }) {
       {activeGame === "ttt" && <TicTacToeContent onChangeGame={openModal} />}
       {activeGame === "arkanoid" && <ArkanoidContent onChangeGame={openModal} />}
       {activeGame === "sudoku" && <SudokuContent onChangeGame={openModal} />}
+      {activeGame === "tetris" && <TetrisContent onChangeGame={openModal} />}
+      {activeGame === "invaders" && <SpaceInvadersContent onChangeGame={openModal} />}
+      {activeGame === "minesweeper" && <MinesweeperContent onChangeGame={openModal} />}
+      {activeGame === "2048" && <Game2048Content onChangeGame={openModal} />}
 
       <GameSelectorModal
         open={modalOpen}

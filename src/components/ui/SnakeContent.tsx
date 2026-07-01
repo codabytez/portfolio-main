@@ -12,6 +12,7 @@ const SPEED = 140;
 
 type Dir = "U" | "D" | "L" | "R";
 type Phase = "idle" | "playing" | "over" | "won";
+type GameMode = "classic" | "endless";
 type Pt = { x: number; y: number };
 
 const OPP: Record<Dir, Dir> = { U: "D", D: "U", L: "R", R: "L" };
@@ -57,9 +58,25 @@ function rrect(
   ctx.closePath();
 }
 
+function getHighScore(mode: GameMode): number {
+  try {
+    return parseInt(localStorage.getItem(`snake-hs-${mode}`) ?? "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function setHighScore(mode: GameMode, score: number) {
+  try {
+    localStorage.setItem(`snake-hs-${mode}`, String(score));
+  } catch {}
+}
+
 export default function SnakeContent({ onChangeGame }: { onChangeGame: () => void }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [eaten, setEaten] = useState(0);
+  const [gameMode, setGameMode] = useState<GameMode>("classic");
+  const [endlessHighScore, setEndlessHighScore] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const snakeRef = useRef<Pt[]>(INIT_SNAKE.map((p) => ({ ...p })));
@@ -68,6 +85,22 @@ export default function SnakeContent({ onChangeGame }: { onChangeGame: () => voi
   const foodRef = useRef<Pt>(randomFood(INIT_SNAKE));
   const eatenRef = useRef(0);
   const phaseRef = useRef<Phase>("idle");
+  const gameModeRef = useRef<GameMode>("classic");
+
+  useEffect(() => {
+    setTimeout(() => setEndlessHighScore(getHighScore("endless")), 0);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "over" && phase !== "won") return;
+    if (gameModeRef.current !== "endless") return;
+    const score = eatenRef.current;
+    const prev = getHighScore("endless");
+    if (score > prev) {
+      setHighScore("endless", score);
+      setEndlessHighScore(score);
+    }
+  }, [phase]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -101,7 +134,9 @@ export default function SnakeContent({ onChangeGame }: { onChangeGame: () => voi
     }
   }, []);
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((mode: GameMode = gameModeRef.current) => {
+    gameModeRef.current = mode;
+    setGameMode(mode);
     snakeRef.current = INIT_SNAKE.map((p) => ({ ...p }));
     dirRef.current = "U";
     nextDirRef.current = "U";
@@ -121,7 +156,7 @@ export default function SnakeContent({ onChangeGame }: { onChangeGame: () => voi
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        if (phaseRef.current !== "playing") startGame();
+        if (phaseRef.current === "over" || phaseRef.current === "won") startGame();
         return;
       }
       const map: Record<string, Dir> = {
@@ -166,7 +201,7 @@ export default function SnakeContent({ onChangeGame }: { onChangeGame: () => voi
         eatenRef.current = newEaten;
         setEaten(newEaten);
         snakeRef.current = [nh, ...snakeRef.current];
-        if (newEaten >= TOTAL_FOOD) {
+        if (gameModeRef.current === "classic" && newEaten >= TOTAL_FOOD) {
           phaseRef.current = "won";
           setPhase("won");
           draw();
@@ -201,35 +236,36 @@ export default function SnakeContent({ onChangeGame }: { onChangeGame: () => voi
 
         {phase === "idle" && (
           <div
-            className="absolute inset-0 flex items-end justify-center"
-            style={{ paddingBottom: "70px" }}
+            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+            style={{ paddingBottom: "40px" }}
           >
-            <Button variant="primary" onClick={startGame}>
-              start-game
+            <p className="text-body-sm text-primitive-slate-400">{"// choose mode"}</p>
+            <Button variant="primary" onClick={() => startGame("classic")}>
+              classic
+            </Button>
+            <Button variant="default" onClick={() => startGame("endless")}>
+              endless
             </Button>
           </div>
         )}
 
         {(phase === "over" || phase === "won") && (
-          <>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <div
-              className="rounded-2 absolute right-0 left-0 flex h-12 flex-col items-center justify-center shadow-[inset_1px_5px_11px_0px_rgba(2,18,27,0.71)]"
-              style={{ top: "264px", backgroundColor: "rgba(1,22,39,0.84)" }}
+              className="rounded-2 flex h-12 w-full flex-col items-center justify-center shadow-[inset_1px_5px_11px_0px_rgba(2,18,27,0.71)]"
+              style={{ backgroundColor: "rgba(1,22,39,0.84)" }}
             >
               <p className="text-heading-h5 text-primitive-teal-400">
                 {phase === "won" ? "WELL DONE!" : "GAME OVER!"}
               </p>
             </div>
-            <button
-              className="absolute right-0 left-0 flex cursor-pointer items-center justify-center"
-              style={{ top: "333px" }}
-              onClick={startGame}
-            >
-              <p className="text-body-sm text-theme-foreground">
-                {phase === "won" ? "play-again" : "start-again"}
-              </p>
-            </button>
-          </>
+            <Button variant="primary" onClick={() => startGame("classic")}>
+              classic
+            </Button>
+            <Button variant="default" onClick={() => startGame("endless")}>
+              endless
+            </Button>
+          </div>
         )}
       </div>
 
@@ -289,31 +325,47 @@ export default function SnakeContent({ onChangeGame }: { onChangeGame: () => voi
           </div>
 
           <div className="flex w-full flex-col items-center justify-center gap-3 px-[10px]">
-            <p className="text-body-sm text-primitive-slate-50 w-full">{"// food left"}</p>
-            <div className="flex w-34 flex-col gap-3">
-              {[0, 5].map((rowStart) => (
-                <div key={rowStart} className="flex gap-3">
-                  {Array.from({ length: 5 }).map((_, i) => {
-                    const idx = rowStart + i;
-                    return (
-                      <Image
-                        key={idx}
-                        src={
-                          idx < foodRemaining
-                            ? "/snake/food-dot-active.svg"
-                            : "/snake/food-dot-inactive.svg"
-                        }
-                        alt=""
-                        width={21}
-                        height={21}
-                        className="size-5.25"
-                      />
-                    );
-                  })}
+            {gameMode === "classic" ? (
+              <>
+                <p className="text-body-sm text-primitive-slate-50 w-full">{"// food left"}</p>
+                <div className="flex w-34 flex-col gap-3">
+                  {[0, 5].map((rowStart) => (
+                    <div key={rowStart} className="flex gap-3">
+                      {Array.from({ length: 5 }).map((_, i) => {
+                        const idx = rowStart + i;
+                        return (
+                          <Image
+                            key={idx}
+                            src={
+                              idx < foodRemaining
+                                ? "/snake/food-dot-active.svg"
+                                : "/snake/food-dot-inactive.svg"
+                            }
+                            alt=""
+                            width={21}
+                            height={21}
+                            className="size-5.25"
+                          />
+                        );
+                      })}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <>
+                <p className="text-body-sm text-primitive-slate-50 w-full">{"// score"}</p>
+                <p className="text-heading-h4 text-primitive-teal-400">{eaten}</p>
+              </>
+            )}
           </div>
+
+          {gameMode === "endless" && (
+            <div className="flex w-full flex-col items-center justify-center gap-1 px-[10px]">
+              <p className="text-body-sm text-primitive-slate-50 w-full">{"// best"}</p>
+              <p className="text-heading-h4 text-primitive-teal-400">{endlessHighScore}</p>
+            </div>
+          )}
         </div>
 
         <button
