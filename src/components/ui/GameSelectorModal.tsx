@@ -4,7 +4,16 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 
-export type GameId = "snake" | "life" | "ttt" | "arkanoid" | "sudoku";
+export type GameId =
+  | "snake"
+  | "life"
+  | "ttt"
+  | "arkanoid"
+  | "sudoku"
+  | "tetris"
+  | "invaders"
+  | "minesweeper"
+  | "2048";
 
 type Game = {
   id: GameId;
@@ -69,6 +78,50 @@ const GAMES: Game[] = [
       "3 mistakes and it's game over",
     ],
   },
+  {
+    id: "tetris",
+    name: "tetris.exe",
+    tag: "// stacking",
+    rules: [
+      "← → to move, ↑ or x to rotate",
+      "↓ soft drop, space hard drop",
+      "clear lines to score points",
+      "classic: clear 20 lines to win",
+    ],
+  },
+  {
+    id: "invaders",
+    name: "space_inv.exe",
+    tag: "// shoot em up",
+    rules: [
+      "← → to move your ship",
+      "space to fire at the invaders",
+      "don't let them reach the bottom",
+      "classic: clear the wave to win",
+    ],
+  },
+  {
+    id: "minesweeper",
+    name: "minesweep.exe",
+    tag: "// deduction",
+    rules: [
+      "left-click to reveal a cell",
+      "right-click to flag a mine",
+      "numbers show adjacent mine count",
+      "reveal all safe cells to win",
+    ],
+  },
+  {
+    id: "2048",
+    name: "2048.exe",
+    tag: "// sliding",
+    rules: [
+      "use ↑↓←→ to slide all tiles",
+      "matching tiles merge and double",
+      "reach the 2048 tile to win",
+      "keep going after 2048 for high score",
+    ],
+  },
 ];
 
 type Props = {
@@ -115,7 +168,7 @@ export default function GameSelectorModal({ open, current, onSelect, onClose }: 
           >
             <p className="text-body-sm text-theme-foreground opacity-60">{"// select a game"}</p>
 
-            <div className="flex gap-4">
+            <div className="flex max-w-2xl flex-wrap justify-center gap-3">
               {GAMES.map((game) => {
                 const isActive = game.id === current;
                 return (
@@ -125,13 +178,15 @@ export default function GameSelectorModal({ open, current, onSelect, onClose }: 
                     onMouseEnter={() => setHovered(game.id)}
                     onMouseLeave={() => setHovered(null)}
                     className={[
-                      "border-theme-theme-stroke rounded-3 flex w-40 cursor-pointer flex-col gap-2 border p-4 text-left transition-colors duration-150",
+                      "border-theme-theme-stroke rounded-3 flex w-36 cursor-pointer flex-col gap-2 border p-3 text-left transition-colors duration-150",
                       isActive
                         ? "bg-primitive-slate-800 border-primitive-slate-500"
                         : "hover:bg-primitive-slate-800/60",
                     ].join(" ")}
                   >
-                    <p className="text-body-sm text-theme-heading-foreground">{game.name}</p>
+                    <p className="text-body-sm text-theme-heading-foreground leading-tight">
+                      {game.name}
+                    </p>
                     <p className="text-body-sm text-primitive-teal-400">{game.tag}</p>
                   </button>
                 );

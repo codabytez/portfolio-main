@@ -14,16 +14,20 @@ const BRICK_ROWS = 5;
 const BRICK_W = 24;
 const BRICK_H = 12;
 const BRICK_GAP = 4;
+const BRICK_ROW_H = BRICK_H + BRICK_GAP;
 const BRICK_OFFSET_X = (CANVAS_W - (BRICK_COLS * (BRICK_W + BRICK_GAP) - BRICK_GAP)) / 2;
 const BRICK_OFFSET_Y = 40;
 const PADDLE_SPEED = 5;
 const INIT_SPEED = 3.2;
 const MAX_SPEED = 5.5;
 const MAX_LIVES = 3;
+const ROW_INTERVAL_MS = 5000;
+const BRICK_DANGER_Y = PADDLE_Y - BRICK_H - 30;
 
 const BRICK_COLORS = ["#ff637e", "#ff8904", "#fdc700", "#00d5be", "#7c86ff"];
 
 type Phase = "idle" | "playing" | "over" | "won";
+type GameMode = "classic" | "endless";
 type Ball = { x: number; y: number; vx: number; vy: number };
 type Brick = { x: number; y: number; alive: boolean; color: string };
 
@@ -33,13 +37,22 @@ function makeBricks(): Brick[] {
     for (let col = 0; col < BRICK_COLS; col++) {
       bricks.push({
         x: BRICK_OFFSET_X + col * (BRICK_W + BRICK_GAP),
-        y: BRICK_OFFSET_Y + row * (BRICK_H + BRICK_GAP),
+        y: BRICK_OFFSET_Y + row * BRICK_ROW_H,
         alive: true,
-        color: BRICK_COLORS[row],
+        color: BRICK_COLORS[row % BRICK_COLORS.length],
       });
     }
   }
   return bricks;
+}
+
+function makeRow(y: number, colorIndex: number): Brick[] {
+  return Array.from({ length: BRICK_COLS }, (_, col) => ({
+    x: BRICK_OFFSET_X + col * (BRICK_W + BRICK_GAP),
+    y,
+    alive: true,
+    color: BRICK_COLORS[colorIndex % BRICK_COLORS.length],
+  }));
 }
 
 function initBall(paddleX: number): Ball {
@@ -51,10 +64,26 @@ function initBall(paddleX: number): Ball {
   };
 }
 
+function getHighScore(): number {
+  try {
+    return parseInt(localStorage.getItem("arkanoid-hs-endless") ?? "0", 10) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function saveHighScore(score: number) {
+  try {
+    localStorage.setItem("arkanoid-hs-endless", String(score));
+  } catch {}
+}
+
 export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => void }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(MAX_LIVES);
+  const [gameMode, setGameMode] = useState<GameMode>("classic");
+  const [endlessHighScore, setEndlessHighScore] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef<Phase>("idle");
@@ -65,6 +94,24 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
   const scoreRef = useRef(0);
   const keysRef = useRef({ left: false, right: false });
   const rafRef = useRef(0);
+  const gameModeRef = useRef<GameMode>("classic");
+  const lastRowTimeRef = useRef(0);
+  const rowColorIndexRef = useRef(BRICK_ROWS);
+
+  useEffect(() => {
+    setTimeout(() => setEndlessHighScore(getHighScore()), 0);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "over") return;
+    if (gameModeRef.current !== "endless") return;
+    const s = scoreRef.current;
+    const prev = getHighScore();
+    if (s > prev) {
+      saveHighScore(s);
+      setEndlessHighScore(s);
+    }
+  }, [phase]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -113,11 +160,15 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
     draw();
   }, [draw]);
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((mode: GameMode = gameModeRef.current) => {
+    gameModeRef.current = mode;
+    setGameMode(mode);
     paddleRef.current = { x: CANVAS_W / 2 - PADDLE_W / 2 };
     bricksRef.current = makeBricks();
     livesRef.current = MAX_LIVES;
     scoreRef.current = 0;
+    rowColorIndexRef.current = BRICK_ROWS;
+    lastRowTimeRef.current = Date.now();
     setScore(0);
     setLives(MAX_LIVES);
     ballRef.current = initBall(CANVAS_W / 2 - PADDLE_W / 2);
@@ -165,14 +216,14 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
         b.x <= p.x + PADDLE_W + BALL_R
       ) {
         b.y = PADDLE_Y - BALL_R;
-        const hit = (b.x - p.x) / PADDLE_W; // 0–1
-        const angle = (hit - 0.5) * 2; // -1 to 1
+        const hit = (b.x - p.x) / PADDLE_W;
+        const angle = (hit - 0.5) * 2;
         const speed = Math.min(Math.sqrt(b.vx * b.vx + b.vy * b.vy) + 0.08, MAX_SPEED);
         b.vx = angle * speed * 0.85;
         b.vy = -Math.sqrt(Math.max(speed * speed - b.vx * b.vx, 1));
       }
 
-      // Ball out of bounds (missed paddle)
+      // Ball out of bounds
       if (b.y - BALL_R > CANVAS_H) {
         const newLives = livesRef.current - 1;
         livesRef.current = newLives;
@@ -190,12 +241,12 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
       for (const brick of bricksRef.current) {
         if (!brick.alive) continue;
 
-        const ballL = b.x - BALL_R;
-        const ballR = b.x + BALL_R;
-        const ballT = b.y - BALL_R;
-        const ballB = b.y + BALL_R;
-        const brickR = brick.x + BRICK_W;
-        const brickB = brick.y + BRICK_H;
+        const ballL = b.x - BALL_R,
+          ballR = b.x + BALL_R;
+        const ballT = b.y - BALL_R,
+          ballB = b.y + BALL_R;
+        const brickR = brick.x + BRICK_W,
+          brickB = brick.y + BRICK_H;
 
         if (ballR <= brick.x || ballL >= brickR || ballB <= brick.y || ballT >= brickB) continue;
 
@@ -204,7 +255,6 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
         scoreRef.current = newScore;
         setScore(newScore);
 
-        // Speed up slightly on each hit
         const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
         if (speed < MAX_SPEED) {
           const ratio = Math.min(speed + 0.05, MAX_SPEED) / speed;
@@ -212,11 +262,10 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
           b.vy *= ratio;
         }
 
-        // Reflect off the closest face
-        const overlapL = ballR - brick.x;
-        const overlapR = brickR - ballL;
-        const overlapT = ballB - brick.y;
-        const overlapB = brickB - ballT;
+        const overlapL = ballR - brick.x,
+          overlapR = brickR - ballL;
+        const overlapT = ballB - brick.y,
+          overlapB = brickB - ballT;
         if (Math.min(overlapL, overlapR) < Math.min(overlapT, overlapB)) {
           b.vx = overlapL < overlapR ? -Math.abs(b.vx) : Math.abs(b.vx);
         } else {
@@ -225,12 +274,40 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
         break;
       }
 
-      // Win check
-      if (bricksRef.current.every((br) => !br.alive)) {
-        phaseRef.current = "won";
-        setPhase("won");
-        draw();
-        return;
+      if (gameModeRef.current === "classic") {
+        // Classic: clear all bricks = win
+        if (bricksRef.current.every((br) => !br.alive)) {
+          phaseRef.current = "won";
+          setPhase("won");
+          draw();
+          return;
+        }
+      } else {
+        // Endless: new row descends every ROW_INTERVAL_MS
+        const now = Date.now();
+        if (now - lastRowTimeRef.current >= ROW_INTERVAL_MS) {
+          lastRowTimeRef.current = now;
+
+          // Remove dead bricks to keep array lean
+          bricksRef.current = bricksRef.current.filter((br) => br.alive);
+
+          // Shift all bricks down one row
+          for (const brick of bricksRef.current) {
+            brick.y += BRICK_ROW_H;
+          }
+
+          // Add fresh row at the top
+          bricksRef.current.push(...makeRow(BRICK_OFFSET_Y, rowColorIndexRef.current));
+          rowColorIndexRef.current++;
+
+          // Game over if any brick has reached the danger zone
+          if (bricksRef.current.some((br) => br.alive && br.y >= BRICK_DANGER_Y)) {
+            phaseRef.current = "over";
+            setPhase("over");
+            draw();
+            return;
+          }
+        }
       }
 
       draw();
@@ -297,46 +374,47 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
 
         {phase === "idle" && (
           <div
-            className="absolute inset-0 flex items-end justify-center"
-            style={{ paddingBottom: "70px" }}
+            className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+            style={{ paddingBottom: "40px" }}
           >
-            <Button variant="primary" onClick={startGame}>
-              start-game
+            <p className="text-body-sm text-primitive-slate-400">{"// choose mode"}</p>
+            <Button variant="primary" onClick={() => startGame("classic")}>
+              classic
+            </Button>
+            <Button variant="default" onClick={() => startGame("endless")}>
+              endless
             </Button>
           </div>
         )}
 
         {(phase === "over" || phase === "won") && (
-          <>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <div
-              className="rounded-2 absolute right-0 left-0 flex h-12 flex-col items-center justify-center shadow-[inset_1px_5px_11px_0px_rgba(2,18,27,0.71)]"
-              style={{ top: "264px", backgroundColor: "rgba(1,22,39,0.84)" }}
+              className="rounded-2 flex h-12 w-full flex-col items-center justify-center shadow-[inset_1px_5px_11px_0px_rgba(2,18,27,0.71)]"
+              style={{ backgroundColor: "rgba(1,22,39,0.84)" }}
             >
               <p className="text-heading-h5 text-primitive-teal-400">
                 {phase === "won" ? "YOU WIN!" : "GAME OVER!"}
               </p>
             </div>
-            <button
-              className="absolute right-0 left-0 flex cursor-pointer items-center justify-center"
-              style={{ top: "333px" }}
-              onClick={startGame}
-            >
-              <p className="text-body-sm text-theme-foreground">play-again</p>
-            </button>
-          </>
+            <Button variant="primary" onClick={() => startGame("classic")}>
+              classic
+            </Button>
+            <Button variant="default" onClick={() => startGame("endless")}>
+              endless
+            </Button>
+          </div>
         )}
       </div>
 
       {/* Right panel */}
       <div className="relative flex w-45 shrink-0 flex-col items-end justify-between self-stretch">
         <div className="flex w-full flex-col gap-6">
-          {/* Score */}
           <div className="bg-primitive-slate-800 rounded-3 flex w-full flex-col gap-2 p-[10px]">
             <p className="text-body-sm text-primitive-slate-50">{"// score"}</p>
             <p className="text-heading-h5 text-primitive-teal-400">{score}</p>
           </div>
 
-          {/* Lives */}
           <div className="flex w-full flex-col gap-3 px-[10px]">
             <p className="text-body-sm text-primitive-slate-50">{"// lives"}</p>
             <div className="flex gap-2">
@@ -353,7 +431,13 @@ export default function ArkanoidContent({ onChangeGame }: { onChangeGame: () => 
             </div>
           </div>
 
-          {/* Controls */}
+          {gameMode === "endless" && (
+            <div className="flex w-full flex-col gap-1 px-[10px]">
+              <p className="text-body-sm text-primitive-slate-50">{"// best"}</p>
+              <p className="text-heading-h5 text-primitive-teal-400">{endlessHighScore}</p>
+            </div>
+          )}
+
           <div className="bg-primitive-slate-800 rounded-3 flex w-full flex-col gap-1 p-[10px]">
             <p className="text-body-sm text-primitive-slate-50">{"// controls"}</p>
             <p className="text-body-sm text-theme-foreground opacity-60">{"← → or mouse"}</p>

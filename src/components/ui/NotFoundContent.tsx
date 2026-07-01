@@ -80,7 +80,7 @@ export default async function NotFoundContent() {
 
       {/* Desktop layout */}
       <div className="hidden items-start gap-36.5 lg:flex">
-        {/* ASCII art 404 / snake game */}
+        {/* ASCII art 404 / snake easter egg */}
         <NotFoundAscii />
 
         {/* Code snippet */}

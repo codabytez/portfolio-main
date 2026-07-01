@@ -4,6 +4,7 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "@convex/_generated/api";
 import "./globals.css";
 import KonamiListener from "@/components/ui/KonamiListener";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 
 const firaCode = Fira_Code({
@@ -46,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${firaCode.variable} h-full overflow-hidden antialiased`}>
       <body className="flex h-full flex-col overflow-hidden">
+        <LoadingScreen />
         <KonamiListener />
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
