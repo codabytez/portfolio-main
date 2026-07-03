@@ -20,7 +20,7 @@ export default function FooterMobile({ className }: FooterMobileProps) {
         .join(" ")}
     >
       <div className="flex items-center px-4 py-5 sm:px-6">
-        <p className="text-body-md text-theme-foreground whitespace-nowrap">find me in:</p>
+        <p className="text-body-md text-theme-foreground whitespace-nowrap">find me on:</p>
       </div>
       <div className="flex items-center">
         {(footerSocials ?? []).map((s, i) => (

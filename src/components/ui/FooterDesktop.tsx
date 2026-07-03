@@ -26,7 +26,7 @@ export default function FooterDesktop({ className }: FooterDesktopProps) {
     >
       <div className="flex items-center">
         <div className="border-theme-theme-stroke flex items-center justify-center border-r px-6 py-5">
-          <p className="text-body-md text-theme-foreground whitespace-nowrap">find me in:</p>
+          <p className="text-body-md text-theme-foreground whitespace-nowrap">find me on:</p>
         </div>
         {(footerSocials ?? []).map((s) => (
           <a
